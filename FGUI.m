@@ -22,6 +22,9 @@
 - (void)_touchMoved:(CGPoint)localPosition;
 - (void)_touchEnded:(CGPoint)localPosition;
 - (BOOL)_isInside:(CGPoint)position;
+- (void)_updateScale;
+- (void)_updateScaleX;
+- (void)_updateScaleY;
 @end
 
 @interface FGUIRoot ()
@@ -100,6 +103,39 @@
 - (void)onExit
 {
     [super onExit];
+}
+
+- (void)setScale:(float)scale
+{
+    [super setScale:scale];
+    
+    for (FGUIElement *aChild in [childTable allValues])
+    {
+        [aChild _updateScale];
+        [aChild setScale:scale];
+    }
+}
+
+- (void)setScaleX:(float)scaleX
+{
+    [super setScaleX:scaleX];
+    
+    for (FGUIElement *aChild in [childTable allValues])
+    {
+        [aChild _updateScaleX];
+        [aChild setScaleX:scaleX];
+    }
+}
+
+- (void)setScaleY:(float)scaleY
+{
+    [super setScaleY:scaleY];
+    
+    for (FGUIElement *aChild in [childTable allValues])
+    {
+        [aChild _updateScaleY];
+        [aChild setScaleY:scaleY];
+    }
 }
 
 - (FGUILayer *)createLayerWithName:(NSString *)aName zOrder:(int)zOrder
@@ -270,6 +306,21 @@
 - (CGPoint)convertToLocalPosition:(CGPoint)aPosition
 {
     return ccpSub(aPosition, ccpSub(self.position, ccp(self.contentSize.width * self.anchorPoint.x, self.contentSize.height * self.anchorPoint.y)));
+}
+
+- (void)_updateScale
+{
+    
+}
+
+- (void)_updateScaleX
+{
+    
+}
+
+- (void)_updateScaleY
+{
+    
 }
 
 @end
@@ -558,6 +609,24 @@
     sprite.anchorPoint = anchorPoint;
 }
 
+- (void)setScale:(float)scale
+{
+    [super setScale:scale];
+    sprite.scale = scale * (parent ? parent.scale : 1);
+}
+
+- (void)setScaleX:(float)scaleX
+{
+    [super setScaleX:scaleX];
+    sprite.scaleX = scaleX;
+}
+
+- (void)setScaleY:(float)scaleY
+{
+    [super setScaleY:scaleY];
+    sprite.scaleY = scaleY;
+}
+
 - (id)initWithRoot:(FGUIRoot *)aRoot andName:(NSString *)aName andParent:(FGUIElement *)aParent andSpriteFrame:(CCSpriteFrame *)aSpriteFrame
 {
 	if ((self = [super initWithRoot:aRoot andName:aName andParent:aParent]))
@@ -565,6 +634,7 @@
         sprite              = [[CCSprite alloc] initWithSpriteFrame:aSpriteFrame];
         self.contentSize    = sprite.contentSize;
         self.anchorPoint    = ccp(0.5f, 0.5f);
+        self.scale          = 1.0f;
 	}
 	
 	return self;
@@ -574,6 +644,21 @@
 {
     [sprite release];
 	[super dealloc];
+}
+
+- (void)_updateScale
+{
+    sprite.scale = self.scale * (parent ? parent.scale : 1);
+}
+
+- (void)_updateScaleX
+{
+    sprite.scaleX = self.scaleX * (parent ? parent.scaleX : 1);
+}
+
+- (void)_updateScaleY
+{
+    sprite.scaleY = self.scaleY * (parent ? parent.scaleY : 1);
 }
 
 @end
@@ -599,6 +684,24 @@
     label.anchorPoint = anchorPoint;
 }
 
+- (void)setScale:(float)scale
+{
+    [super setScale:scale];
+    label.scale = scale * (parent ? parent.scale : 1);
+}
+
+- (void)setScaleX:(float)scaleX
+{
+    [super setScaleX:scaleX];
+    label.scaleX = scaleX;
+}
+
+- (void)setScaleY:(float)scaleY
+{
+    [super setScaleY:scaleY];
+    label.scaleY = scaleY;
+}
+
 - (NSString *)string
 {
     return [[label.string copy] autorelease];
@@ -619,6 +722,7 @@
         
         self.contentSize    = label.contentSize;
         self.anchorPoint    = ccp(0.5f, 0.5f);
+        self.scale          = 1.0f;
 	}
 	
 	return self;
@@ -628,6 +732,24 @@
 {
     [label release];
     [super dealloc];
+}
+
+- (void)_updateScale
+{
+    label.scale = self.scale * (parent ? parent.scale : 1);
+    label.position = ccpAdd(self.parent.position, ccpMult(self.position, self.parent.scale));
+}
+
+- (void)_updateScaleX
+{
+    label.scaleX = self.scaleX * (parent ? parent.scaleX : 1);
+    label.position = ccpAdd(self.parent.position, ccp(self.position.x * self.parent.scaleX, self.position.y * self.parent.scaleY));
+}
+
+- (void)_updateScaleY
+{
+    label.scaleY = self.scaleY * (parent ? parent.scaleY : 1);
+    label.position = ccpAdd(self.parent.position, ccp(self.position.x * self.parent.scaleX, self.position.y * self.parent.scaleY));
 }
 
 @end

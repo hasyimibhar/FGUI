@@ -27,6 +27,7 @@
         [self addChild:guiRoot];
         
         FGUILayer *layer1 = [guiRoot createLayerWithName:@"Layer1" zOrder:0];
+        layer1.scale = 2.0f;
         
         FGUIButton *button = [layer1 createButtonWithName:@"Button1" spriteFrameArray:@[CC_SPRITEFRAME(@"Button_Normal.png"), CC_SPRITEFRAME(@"Button_Selected.png"), CC_SPRITEFRAME(@"Button_Disabled.png")] zOrder:1];
         button.anchorPoint = ccp(0.5f, 0);
@@ -45,8 +46,12 @@
         
         CGSize winSize = [[CCDirector sharedDirector] winSize];
         
-        FGUILabel *label = [layer1 createLabelWithName:@"Label1" string:@"Hello, world!" fontFile:@"HeadingFont.fnt" zOrder:10];
-        label.position = ccp(winSize.width / 2, winSize.height - 50);
+        FGUILabel *titleLabel = [layer1 createLabelWithName:@"Title" string:@"Hello, world!" fontFile:@"HeadingFont.fnt" zOrder:10];
+        titleLabel.position = ccp(winSize.width / 2, winSize.height / 2);
+//        titleLabel.scale = 1.5f;
+        
+        FGUILabel *subtitleLabel = [layer1 createLabelWithName:@"Subtitle" string:@"Damn, it works! Thank you, mikezang!" fontFile:@"BodyFont.fnt" zOrder:10];
+        subtitleLabel.position = ccp(winSize.width / 2, winSize.height / 2 - 20);
 	}
 	
 	return self;
