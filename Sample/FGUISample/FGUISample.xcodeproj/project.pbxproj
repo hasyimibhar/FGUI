@@ -139,6 +139,7 @@
 		1CDF08741637C7A800F3FCA1 /* BodyFont.fnt in Resources */ = {isa = PBXBuildFile; fileRef = 1CDF08721637C7A800F3FCA1 /* BodyFont.fnt */; };
 		1CDF08751637C7A800F3FCA1 /* HeadingFont.fnt in Resources */ = {isa = PBXBuildFile; fileRef = 1CDF08731637C7A800F3FCA1 /* HeadingFont.fnt */; };
 		1CDF087D1637D3DD00F3FCA1 /* Default-568h@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 1CDF087C1637D3DD00F3FCA1 /* Default-568h@2x.png */; };
+		1CDF08801637DD3C00F3FCA1 /* MyCustomLayer.m in Sources */ = {isa = PBXBuildFile; fileRef = 1CDF087F1637DD3B00F3FCA1 /* MyCustomLayer.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -411,6 +412,8 @@
 		1CDF08721637C7A800F3FCA1 /* BodyFont.fnt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = BodyFont.fnt; path = Resources/BodyFont.fnt; sourceTree = "<group>"; };
 		1CDF08731637C7A800F3FCA1 /* HeadingFont.fnt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = HeadingFont.fnt; path = Resources/HeadingFont.fnt; sourceTree = "<group>"; };
 		1CDF087C1637D3DD00F3FCA1 /* Default-568h@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "Default-568h@2x.png"; path = "Resources/Default-568h@2x.png"; sourceTree = "<group>"; };
+		1CDF087E1637DD3A00F3FCA1 /* MyCustomLayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MyCustomLayer.h; sourceTree = "<group>"; };
+		1CDF087F1637DD3B00F3FCA1 /* MyCustomLayer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MyCustomLayer.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -475,6 +478,8 @@
 				1CDF06A6163796C500F3FCA1 /* TestScene.m */,
 				1CDF06A8163796E300F3FCA1 /* FGUI.h */,
 				1CDF06A9163796E300F3FCA1 /* FGUI.m */,
+				1CDF087E1637DD3A00F3FCA1 /* MyCustomLayer.h */,
+				1CDF087F1637DD3B00F3FCA1 /* MyCustomLayer.m */,
 				1CDF05201637969F00F3FCA1 /* Resources */,
 				1CDF053A1637969F00F3FCA1 /* libs */,
 				1CDF0693163796A200F3FCA1 /* Supporting Files */,
@@ -1035,6 +1040,7 @@
 				1CDF06A7163796C500F3FCA1 /* TestScene.m in Sources */,
 				1CDF06AA163796E300F3FCA1 /* FGUI.m in Sources */,
 				1CDF08711637C49700F3FCA1 /* CCLabelBNFont.m in Sources */,
+				1CDF08801637DD3C00F3FCA1 /* MyCustomLayer.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

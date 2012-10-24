@@ -9,6 +9,23 @@
 #import "FGUI.h"
 #import "CCLabelBNFont.h"
 
+@implementation NSDictionary (ValueSearch)
+
+- (BOOL)containsValue:(id<NSObject>)value
+{
+    for (id<NSObject> aValue in [self allValues])
+    {
+        if ([value isEqual:aValue])
+        {
+            return YES;
+        }
+    }
+    
+    return NO;
+}
+
+@end
+
 @interface FGUIElement ()
 {
     FGUIElement *activeChild;
@@ -22,9 +39,16 @@
 - (void)_touchMoved:(CGPoint)localPosition;
 - (void)_touchEnded:(CGPoint)localPosition;
 - (BOOL)_isInside:(CGPoint)position;
+- (void)_updatePosition;
 - (void)_updateScale;
 - (void)_updateScaleX;
 - (void)_updateScaleY;
+
+@end
+
+@interface FGUILayer ()
+- (void)_setName:(NSString *)aName;
+- (void)_setRoot:(FGUIRoot *)aRoot;
 @end
 
 @interface FGUIRoot ()
@@ -76,9 +100,24 @@
 
 @synthesize name, delegate;
 
+- (id)init
+{
+    if ((self = [super init]))
+	{
+        root        = nil;
+        name        = nil;
+        parent      = nil;
+        
+        childTable  = [[NSMutableDictionary alloc] init];
+        activeChild = nil;
+	}
+	
+	return self;
+}
+
 - (id)initWithRoot:(FGUIRoot *)aRoot andName:(NSString *)aName andParent:(FGUIElement *)aParent
 {
-	if ((self = [super init]))
+	if ((self = [self init]))
 	{
         assert(aRoot);
         
@@ -135,6 +174,16 @@
     {
         [aChild _updateScaleY];
         [aChild setScaleY:scaleY];
+    }
+}
+
+- (void)setPosition:(CGPoint)position
+{
+    [super setPosition:position];
+    
+    for (FGUIElement *aChild in [childTable allValues])
+    {
+        [aChild _updatePosition];
     }
 }
 
@@ -248,6 +297,8 @@
 
 - (BOOL)_touchBegan:(CGPoint)localPosition
 {
+    activeChild = nil;
+    
     if ([self touchBegan:localPosition])
     {
         for (FGUIElement *aChild in [childTable allValues])
@@ -259,7 +310,7 @@
             }
         }
         
-        return YES;
+        return childTable.count == 0 || activeChild != nil;
     }
     
     return NO;
@@ -306,6 +357,11 @@
 - (CGPoint)convertToLocalPosition:(CGPoint)aPosition
 {
     return ccpSub(aPosition, ccpSub(self.position, ccp(self.contentSize.width * self.anchorPoint.x, self.contentSize.height * self.anchorPoint.y)));
+}
+
+- (void)_updatePosition
+{
+    
 }
 
 - (void)_updateScale
@@ -380,6 +436,22 @@
     return layer;
 }
 
+- (void)addLayer:(FGUILayer *)aLayer withName:(NSString *)aName zOrder:(int)zOrder
+{
+    assert(aLayer);
+    assert(aLayer.parent == nil);
+    assert(![layerTable containsValue:aLayer]);
+    assert(aName);
+    assert(zOrder >= 0);
+    assert(layerTable[aName] == nil);
+    
+    [aLayer _setRoot:self];
+    [aLayer _setName:aName];
+    [self addChild:aLayer z:zOrder];
+    layerTable[aName] = aLayer;
+    [aLayer setup];
+}
+
 - (void)destroyLayer:(FGUILayer *)aLayer
 {
     assert(layerTable[aLayer.name]);
@@ -434,6 +506,16 @@
 
 @implementation FGUILayer
 
+- (id)init
+{
+    if ((self = [super init]))
+	{
+        self.contentSize = [[CCDirector sharedDirector] winSize];
+	}
+	
+	return self;
+}
+
 - (id)initWithRoot:(FGUIRoot *)aRoot andName:(NSString *)aName andParent:(FGUIElement *)aParent
 {
 	if ((self = [super initWithRoot:aRoot andName:aName andParent:aParent]))
@@ -447,6 +529,24 @@
 - (void)dealloc
 {
 	[super dealloc];
+}
+
+- (void)setup
+{
+    
+}
+
+- (void)_setName:(NSString *)aName
+{
+    assert(aName);
+    [name release];
+    name = [aName copy];
+}
+
+- (void)_setRoot:(FGUIRoot *)aRoot
+{
+    assert(aRoot);
+    root = aRoot;
 }
 
 @end
@@ -501,6 +601,24 @@
 {
     [super setAnchorPoint:anchorPoint];
     sprite.anchorPoint = anchorPoint;
+}
+
+- (void)setScale:(float)scale
+{
+    [super setScale:scale];
+    sprite.scale = scale * (parent ? parent.scale : 1);
+}
+
+- (void)setScaleX:(float)scaleX
+{
+    [super setScaleX:scaleX];
+    sprite.scaleX = scaleX;
+}
+
+- (void)setScaleY:(float)scaleY
+{
+    [super setScaleY:scaleY];
+    sprite.scaleY = scaleY;
 }
 
 - (id)initWithRoot:(FGUIRoot *)aRoot andName:(NSString *)aName andParent:(FGUIElement *)aParent andSpriteFrameArray:(NSArray *)aSpriteFrameArray
@@ -564,7 +682,12 @@
     {
         [sprite setDisplayFrame:selectedSpriteFrame];
         [onPressTarget performSelector:onPressSelector];
-        onPressBlock();
+        
+        if (onPressBlock)
+        {
+            onPressBlock();
+        }
+        
         return YES;
     }
     
@@ -575,7 +698,31 @@
 {
     [sprite setDisplayFrame:normalSpriteFrame];
     [onReleaseTarget performSelector:onReleaseSelector];
-    onReleaseBlock();
+    
+    if (onReleaseBlock)
+    {
+        onReleaseBlock();
+    }
+}
+
+- (void)_updatePosition
+{
+    sprite.position = [self worldPosition];
+}
+
+- (void)_updateScale
+{
+    sprite.scale = self.scale * (parent ? parent.scale : 1);
+}
+
+- (void)_updateScaleX
+{
+    sprite.scaleX = self.scaleX * (parent ? parent.scaleX : 1);
+}
+
+- (void)_updateScaleY
+{
+    sprite.scaleY = self.scaleY * (parent ? parent.scaleY : 1);
 }
 
 @end
@@ -644,6 +791,11 @@
 {
     [sprite release];
 	[super dealloc];
+}
+
+- (void)_updatePosition
+{
+    sprite.position = [self worldPosition];
 }
 
 - (void)_updateScale
@@ -732,6 +884,11 @@
 {
     [label release];
     [super dealloc];
+}
+
+- (void)_updatePosition
+{
+    label.position = [self worldPosition];
 }
 
 - (void)_updateScale

@@ -8,6 +8,11 @@
 
 #import "cocos2d.h"
 
+// For debugging purpose
+@interface NSDictionary (ValueSearch)
+- (BOOL)containsValue:(id<NSObject>)value;
+@end
+
 @class FGUIRoot;
 @class FGUILayer;
 @class FGUISprite;
@@ -67,6 +72,8 @@ typedef void(^VoidBlock)(void);
 - (id)initWithFile:(NSString *)aFile;
 
 - (FGUILayer *)createLayerWithName:(NSString *)aName zOrder:(int)zOrder;
+- (void)addLayer:(FGUILayer *)aLayer withName:(NSString *)aName zOrder:(int)zOrder;
+
 - (void)destroyLayer:(FGUILayer *)aLayer;
 - (void)destroyLayerWithName:(NSString *)aLayerName;
 
@@ -75,7 +82,7 @@ typedef void(^VoidBlock)(void);
 @end
 
 @interface FGUILayer : FGUIElement
-
+- (void)setup;
 @end
 
 @interface FGUIButton : FGUIElement

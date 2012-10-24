@@ -7,6 +7,7 @@
 //
 
 #import "TestScene.h"
+#import "MyCustomLayer.h"
 
 @interface TestScene ()
 - (void)onButtonPressed;
@@ -27,31 +28,25 @@
         [self addChild:guiRoot];
         
         FGUILayer *layer1 = [guiRoot createLayerWithName:@"Layer1" zOrder:0];
-        layer1.scale = 2.0f;
-        
-        FGUIButton *button = [layer1 createButtonWithName:@"Button1" spriteFrameArray:@[CC_SPRITEFRAME(@"Button_Normal.png"), CC_SPRITEFRAME(@"Button_Selected.png"), CC_SPRITEFRAME(@"Button_Disabled.png")] zOrder:1];
-        button.anchorPoint = ccp(0.5f, 0);
-        button.position = ccp(200, 200);
-        
-        button.onPressBlock = ^{
-            CCLOG(@"(Block) Pressed!");
-        };
-        
-        button.onReleaseBlock = ^{
-            CCLOG(@"(Block) Released!");
-        };
-        
-        [button setOnPressWithSelector:@selector(onButtonPressed) andTarget:self];
-        [button setOnReleaseWithSelector:@selector(onButtonReleased) andTarget:self];
         
         CGSize winSize = [[CCDirector sharedDirector] winSize];
         
         FGUILabel *titleLabel = [layer1 createLabelWithName:@"Title" string:@"Hello, world!" fontFile:@"HeadingFont.fnt" zOrder:10];
-        titleLabel.position = ccp(winSize.width / 2, winSize.height / 2);
-//        titleLabel.scale = 1.5f;
+        titleLabel.position = ccp(winSize.width / 2, winSize.height - 50);
+        titleLabel.scale = 2.0f;
         
         FGUILabel *subtitleLabel = [layer1 createLabelWithName:@"Subtitle" string:@"Damn, it works! Thank you, mikezang!" fontFile:@"BodyFont.fnt" zOrder:10];
-        subtitleLabel.position = ccp(winSize.width / 2, winSize.height / 2 - 20);
+        subtitleLabel.position = ccp(winSize.width / 2, winSize.height - 70);
+        
+        subtitleLabel.scale = 2.0f;
+        
+        MyCustomLayer *layer2 = [MyCustomLayer node];
+        [guiRoot addLayer:layer2 withName:@"MyLayer" zOrder:20];
+        layer2.position = ccp(200, 0);
+        
+        MyCustomLayer *layer3 = [MyCustomLayer node];
+        [guiRoot addLayer:layer3 withName:@"MyLayer2" zOrder:20];
+        layer3.position = ccp(0, 150);
 	}
 	
 	return self;
