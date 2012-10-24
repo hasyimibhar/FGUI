@@ -138,6 +138,7 @@
 		1CDF08711637C49700F3FCA1 /* CCLabelBNFont.m in Sources */ = {isa = PBXBuildFile; fileRef = 1CDF08701637C49700F3FCA1 /* CCLabelBNFont.m */; };
 		1CDF08741637C7A800F3FCA1 /* BodyFont.fnt in Resources */ = {isa = PBXBuildFile; fileRef = 1CDF08721637C7A800F3FCA1 /* BodyFont.fnt */; };
 		1CDF08751637C7A800F3FCA1 /* HeadingFont.fnt in Resources */ = {isa = PBXBuildFile; fileRef = 1CDF08731637C7A800F3FCA1 /* HeadingFont.fnt */; };
+		1CDF087D1637D3DD00F3FCA1 /* Default-568h@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 1CDF087C1637D3DD00F3FCA1 /* Default-568h@2x.png */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -409,6 +410,7 @@
 		1CDF08701637C49700F3FCA1 /* CCLabelBNFont.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = CCLabelBNFont.m; path = libs/CCLabelBNFont.m; sourceTree = "<group>"; };
 		1CDF08721637C7A800F3FCA1 /* BodyFont.fnt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = BodyFont.fnt; path = Resources/BodyFont.fnt; sourceTree = "<group>"; };
 		1CDF08731637C7A800F3FCA1 /* HeadingFont.fnt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = HeadingFont.fnt; path = Resources/HeadingFont.fnt; sourceTree = "<group>"; };
+		1CDF087C1637D3DD00F3FCA1 /* Default-568h@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "Default-568h@2x.png"; path = "Resources/Default-568h@2x.png"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -489,6 +491,7 @@
 				1CDF06B016379C6000F3FCA1 /* Spritesheet.png */,
 				1CDF05211637969F00F3FCA1 /* Default.png */,
 				1CDF05231637969F00F3FCA1 /* Default-Landscape~ipad.png */,
+				1CDF087C1637D3DD00F3FCA1 /* Default-568h@2x.png */,
 				1CDF05251637969F00F3FCA1 /* fps_images.png */,
 				1CDF05271637969F00F3FCA1 /* fps_images-hd.png */,
 				1CDF05291637969F00F3FCA1 /* fps_images-ipadhd.png */,
@@ -916,6 +919,7 @@
 				1CDF06B216379C6000F3FCA1 /* Spritesheet.png in Resources */,
 				1CDF08741637C7A800F3FCA1 /* BodyFont.fnt in Resources */,
 				1CDF08751637C7A800F3FCA1 /* HeadingFont.fnt in Resources */,
+				1CDF087D1637D3DD00F3FCA1 /* Default-568h@2x.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1052,7 +1056,7 @@
 				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 4.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 4.3;
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
@@ -1071,7 +1075,7 @@
 				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 4.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 4.3;
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
@@ -1087,6 +1091,7 @@
 				GCC_PREFIX_HEADER = FGUISample/Prefix.pch;
 				HEADER_SEARCH_PATHS = "\"FGUISample/libs/kazmath/include\"";
 				INFOPLIST_FILE = FGUISample/Resources/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 4.3;
 				OTHER_LDFLAGS = (
 					"-lz",
 					"-ObjC",
@@ -1105,6 +1110,7 @@
 				GCC_PREFIX_HEADER = FGUISample/Prefix.pch;
 				HEADER_SEARCH_PATHS = "\"FGUISample/libs/kazmath/include\"";
 				INFOPLIST_FILE = FGUISample/Resources/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 4.3;
 				OTHER_LDFLAGS = (
 					"-lz",
 					"-ObjC",
