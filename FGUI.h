@@ -14,6 +14,8 @@
 @class FGUIButton;
 @class FGUIElement;
 
+typedef void(^VoidBlock)(void);
+
 @protocol FGUIElementDelegate
 - (void)guiElementTouchBegan:(FGUIElement *)aElement;
 - (void)guiElementTouchMoved:(FGUIElement *)aElement;
@@ -76,14 +78,28 @@
     CCSpriteFrame *selectedSpriteFrame;
     CCSpriteFrame *disabledSpriteFrame;
     BOOL isEnabled;
+    
+    SEL onPressSelector;
+    id onPressTarget;
+    
+    SEL onReleaseSelector;
+    id onReleaseTarget;
+    
+    VoidBlock onPressBlock;
+    VoidBlock onReleaseBlock;
 }
 
 - (void)setSpriteFramesWithArray:(NSArray *)aSpriteFrameArray;
+- (void)setOnPressWithSelector:(SEL)aSelector andTarget:(id)aTarget;
+- (void)setOnReleaseWithSelector:(SEL)aSelector andTarget:(id)aTarget;
 
 @property (readwrite, assign, nonatomic) CCSpriteFrame * normalSpriteFrame;
 @property (readwrite, assign, nonatomic) CCSpriteFrame * selectedSpriteFrame;
 @property (readwrite, assign, nonatomic) CCSpriteFrame * disabledSpriteFrame;
 @property (readwrite, assign) BOOL isEnabled;
+
+@property (readwrite, copy, nonatomic) VoidBlock onPressBlock;
+@property (readwrite, copy, nonatomic) VoidBlock onReleaseBlock;
 
 @end
 

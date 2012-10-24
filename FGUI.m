@@ -369,7 +369,7 @@
     return [[[self alloc] initWithRoot:aRoot andName:aName andParent:aParent andSpriteFrameArray:aSpriteFrameArray] autorelease];
 }
 
-@synthesize normalSpriteFrame, selectedSpriteFrame, disabledSpriteFrame;
+@synthesize normalSpriteFrame, selectedSpriteFrame, disabledSpriteFrame, onPressBlock, onReleaseBlock;
 @dynamic isEnabled;
 
 - (void)setNormalSpriteFrame:(CCSpriteFrame *)aNormalSpriteFrame
@@ -425,6 +425,12 @@
         sprite              = [[CCSprite alloc] initWithSpriteFrame:aSpriteFrameArray[0]];
         self.contentSize    = sprite.contentSize;
         self.anchorPoint    = ccp(0.5f, 0.5f);
+        onPressSelector     = nil;
+        onPressTarget       = nil;
+        onReleaseSelector   = nil;
+        onReleaseTarget     = nil;
+        onPressBlock        = nil;
+        onReleaseBlock      = nil;
         
         [self setSpriteFramesWithArray:aSpriteFrameArray];
 	}
@@ -434,6 +440,8 @@
 
 - (void)dealloc
 {
+    [onReleaseBlock release];
+    [onPressBlock release];
     [sprite release];
 	[super dealloc];
 }
@@ -442,9 +450,23 @@
 {
     assert(aSpriteFrameArray.count == 3);
     
-    self.normalSpriteFrame = aSpriteFrameArray[0];
-    self.selectedSpriteFrame = aSpriteFrameArray[1];
-    self.disabledSpriteFrame = aSpriteFrameArray[2];
+    self.normalSpriteFrame      = aSpriteFrameArray[0];
+    self.selectedSpriteFrame    = aSpriteFrameArray[1];
+    self.disabledSpriteFrame    = aSpriteFrameArray[2];
+}
+
+- (void)setOnPressWithSelector:(SEL)aSelector andTarget:(id)aTarget
+{
+    assert(aSelector && aTarget);
+    onPressSelector     = aSelector;
+    onPressTarget       = aTarget;
+}
+
+- (void)setOnReleaseWithSelector:(SEL)aSelector andTarget:(id)aTarget
+{
+    assert(aSelector && aTarget);
+    onReleaseSelector   = aSelector;
+    onReleaseTarget     = aTarget;
 }
 
 - (BOOL)touchBegan:(CGPoint)localPosition
@@ -452,6 +474,8 @@
     if (isEnabled && [self _isInside:localPosition])
     {
         [sprite setDisplayFrame:selectedSpriteFrame];
+        [onPressTarget performSelector:onPressSelector];
+        onPressBlock();
         return YES;
     }
     
@@ -461,6 +485,8 @@
 - (void)touchEnded:(CGPoint)localPosition
 {
     [sprite setDisplayFrame:normalSpriteFrame];
+    [onReleaseTarget performSelector:onReleaseSelector];
+    onReleaseBlock();
 }
 
 @end

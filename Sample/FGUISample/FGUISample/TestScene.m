@@ -8,6 +8,11 @@
 
 #import "TestScene.h"
 
+@interface TestScene ()
+- (void)onButtonPressed;
+- (void)onButtonReleased;
+@end
+
 @implementation TestScene
 
 - (id)init
@@ -23,6 +28,17 @@
         FGUIButton *button = [layer1 createButtonWithName:@"Button1" spriteFrameArray:@[CC_SPRITEFRAME(@"Button_Normal.png"), CC_SPRITEFRAME(@"Button_Selected.png"), CC_SPRITEFRAME(@"Button_Disabled.png")] zOrder:1];
         button.anchorPoint = ccp(0.5f, 0);
         button.position = ccp(200, 200);
+        
+        button.onPressBlock = ^{
+            CCLOG(@"(Block) Pressed!");
+        };
+        
+        button.onReleaseBlock = ^{
+            CCLOG(@"(Block) Released!");
+        };
+        
+        [button setOnPressWithSelector:@selector(onButtonPressed) andTarget:self];
+        [button setOnReleaseWithSelector:@selector(onButtonReleased) andTarget:self];
 	}
 	
 	return self;
@@ -32,6 +48,16 @@
 {
     [guiRoot release];
 	[super dealloc];
+}
+
+- (void)onButtonPressed
+{
+    CCLOG(@"(SEL) Pressed!");
+}
+
+- (void)onButtonReleased
+{
+    CCLOG(@"(SEL) Released!");
 }
 
 @end
