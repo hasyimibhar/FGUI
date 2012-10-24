@@ -9,6 +9,8 @@
 #import "cocos2d.h"
 #import "FGUI.h"
 
+#define CC_SPRITEFRAME(s)   [[CCSpriteFrameCache sharedSpriteFrameCache] spriteFrameByName:s]
+
 @interface TestScene : CCScene
 {
     FGUIRoot *guiRoot;

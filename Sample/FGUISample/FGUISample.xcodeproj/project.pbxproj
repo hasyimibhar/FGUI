@@ -133,6 +133,8 @@
 		1CDF0699163796A200F3FCA1 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 1CDF0698163796A200F3FCA1 /* AppDelegate.m */; };
 		1CDF06A7163796C500F3FCA1 /* TestScene.m in Sources */ = {isa = PBXBuildFile; fileRef = 1CDF06A6163796C500F3FCA1 /* TestScene.m */; };
 		1CDF06AA163796E300F3FCA1 /* FGUI.m in Sources */ = {isa = PBXBuildFile; fileRef = 1CDF06A9163796E300F3FCA1 /* FGUI.m */; };
+		1CDF06B116379C6000F3FCA1 /* Spritesheet.plist in Resources */ = {isa = PBXBuildFile; fileRef = 1CDF06AF16379C6000F3FCA1 /* Spritesheet.plist */; };
+		1CDF06B216379C6000F3FCA1 /* Spritesheet.png in Resources */ = {isa = PBXBuildFile; fileRef = 1CDF06B016379C6000F3FCA1 /* Spritesheet.png */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -398,6 +400,8 @@
 		1CDF06A6163796C500F3FCA1 /* TestScene.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TestScene.m; sourceTree = "<group>"; };
 		1CDF06A8163796E300F3FCA1 /* FGUI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FGUI.h; path = ../../../FGUI.h; sourceTree = "<group>"; };
 		1CDF06A9163796E300F3FCA1 /* FGUI.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = FGUI.m; path = ../../../FGUI.m; sourceTree = "<group>"; };
+		1CDF06AF16379C6000F3FCA1 /* Spritesheet.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Spritesheet.plist; path = Resources/Spritesheet.plist; sourceTree = "<group>"; };
+		1CDF06B016379C6000F3FCA1 /* Spritesheet.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = Spritesheet.png; path = Resources/Spritesheet.png; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -472,6 +476,8 @@
 		1CDF05201637969F00F3FCA1 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				1CDF06AF16379C6000F3FCA1 /* Spritesheet.plist */,
+				1CDF06B016379C6000F3FCA1 /* Spritesheet.png */,
 				1CDF05211637969F00F3FCA1 /* Default.png */,
 				1CDF05231637969F00F3FCA1 /* Default-Landscape~ipad.png */,
 				1CDF05251637969F00F3FCA1 /* fps_images.png */,
@@ -895,6 +901,8 @@
 				1CDF05361637969F00F3FCA1 /* Icon@2x.png in Resources */,
 				1CDF05391637969F00F3FCA1 /* iTunesArtwork in Resources */,
 				1CDF0677163796A200F3FCA1 /* ChangeLog in Resources */,
+				1CDF06B116379C6000F3FCA1 /* Spritesheet.plist in Resources */,
+				1CDF06B216379C6000F3FCA1 /* Spritesheet.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

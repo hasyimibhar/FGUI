@@ -14,7 +14,15 @@
 {
 	if ((self = [super init]))
 	{
-        guiRoot = nil;
+        [[CCSpriteFrameCache sharedSpriteFrameCache] addSpriteFramesWithFile:@"Spritesheet.plist"];
+        guiRoot = [[FGUIRoot alloc] initWithFile:@"Spritesheet.png"];
+        [self addChild:guiRoot];
+        
+        FGUILayer *layer1 = [guiRoot createLayerWithName:@"Layer1" zOrder:0];
+        
+        FGUIButton *button = [layer1 createButtonWithName:@"Button1" spriteFrameArray:@[CC_SPRITEFRAME(@"Button_Normal.png"), CC_SPRITEFRAME(@"Button_Selected.png"), CC_SPRITEFRAME(@"Button_Disabled.png")] zOrder:1];
+        button.anchorPoint = ccp(0.5f, 0);
+        button.position = ccp(200, 200);
 	}
 	
 	return self;
