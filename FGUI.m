@@ -7,6 +7,7 @@
 //
 
 #import "FGUI.h"
+#import "CCLabelBNFont.h"
 
 @interface FGUIElement ()
 {
@@ -28,7 +29,6 @@
     FGUILayer *activeLayer;
 }
 
-@property (readonly, assign, nonatomic) CCSpriteBatchNode * batchNode;
 @end
 
 @interface FGUIButton ()
@@ -51,6 +51,17 @@
 + (id)spriteWithRoot:(FGUIRoot *)aRoot andName:(NSString *)aName andParent:(FGUIElement *)aParent andSpriteFrame:(CCSpriteFrame *)aSpriteFrame;
 
 - (id)initWithRoot:(FGUIRoot *)aRoot andName:(NSString *)aName andParent:(FGUIElement *)aParent andSpriteFrame:(CCSpriteFrame *)aSpriteFrame;
+@end
+
+@interface FGUILabel ()
+{
+@public
+    CCLabelBNFont *label;
+}
+
++ (id)labelWithRoot:(FGUIRoot *)aRoot andName:(NSString *)aName andParent:(FGUIElement *)aParent andFile:(NSString *)aFile;
+
+- (id)initWithRoot:(FGUIRoot *)aRoot andName:(NSString *)aName andParent:(FGUIElement *)aParent andFile:(NSString *)aFile;
 @end
 
 @implementation FGUIElement
@@ -165,6 +176,33 @@
     [root.batchNode removeChild:aSprite->sprite cleanup:YES];
     [aSprite removeFromParentAndCleanup:YES];
     [childTable removeObjectForKey:aSprite.name];
+}
+
+- (FGUILabel *)createLabelWithName:(NSString *)aName string:(NSString *)aString fontFile:(NSString *)aFontFile zOrder:(int)zOrder
+{
+    assert(aName);
+    assert(zOrder >= 0);
+    assert(childTable[aName] == nil);
+    
+    FGUILabel *label = [FGUILabel labelWithRoot:root andName:aName andParent:self andFile:aFontFile];
+    label.string = aString;
+    [self addChild:label z:zOrder];
+    [root.batchNode addChild:label->label];
+    childTable[aName] = label;
+    
+    return label;
+}
+
+- (void)destroyLabel:(FGUILabel *)aLabel
+{
+    assert(childTable[aLabel.name]);
+    assert(childTable[aLabel.name] == aLabel);
+    assert([aLabel isKindOfClass:FGUILabel.class]);
+    assert([self.children containsObject:aLabel]);
+    
+    [root.batchNode removeChild:aLabel->label cleanup:YES];
+    [aLabel removeFromParentAndCleanup:YES];
+    [childTable removeObjectForKey:aLabel.name];
 }
 
 - (BOOL)_isInside:(CGPoint)position
@@ -536,6 +574,60 @@
 {
     [sprite release];
 	[super dealloc];
+}
+
+@end
+
+@implementation FGUILabel
+
++ (id)labelWithRoot:(FGUIRoot *)aRoot andName:(NSString *)aName andParent:(FGUIElement *)aParent andFile:(NSString *)aFile
+{
+    return [[[self alloc] initWithRoot:aRoot andName:aName andParent:aParent andFile:aFile] autorelease];
+}
+
+@dynamic string;
+
+- (void)setPosition:(CGPoint)position
+{
+    [super setPosition:position];
+    label.position = [self worldPosition];
+}
+
+- (void)setAnchorPoint:(CGPoint)anchorPoint
+{
+    [super setAnchorPoint:anchorPoint];
+    label.anchorPoint = anchorPoint;
+}
+
+- (NSString *)string
+{
+    return [[label.string copy] autorelease];
+}
+
+- (void)setString:(NSString *)string
+{
+    assert(string);
+    label.string = string;
+}
+
+- (id)initWithRoot:(FGUIRoot *)aRoot andName:(NSString *)aName andParent:(FGUIElement *)aParent andFile:(NSString *)aFile
+{
+    if ((self = [super initWithRoot:aRoot andName:aName andParent:aParent]))
+	{
+        label               = [[CCLabelBNFont alloc] initWithString:@"" fntFile:aFile];
+        assert(label);
+        
+        self.contentSize    = label.contentSize;
+        self.anchorPoint    = ccp(0.5f, 0.5f);
+	}
+	
+	return self;
+}
+
+- (void)dealloc
+{
+    [label release];
+    [super dealloc];
 }
 
 @end

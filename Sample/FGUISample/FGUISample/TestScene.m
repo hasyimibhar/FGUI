@@ -21,6 +21,9 @@
 	{
         [[CCSpriteFrameCache sharedSpriteFrameCache] addSpriteFramesWithFile:@"Spritesheet.plist"];
         guiRoot = [[FGUIRoot alloc] initWithFile:@"Spritesheet.png"];
+        
+        // Disable anti-aliasing, because I'm using pixel font
+        [[guiRoot.batchNode texture] setAliasTexParameters];
         [self addChild:guiRoot];
         
         FGUILayer *layer1 = [guiRoot createLayerWithName:@"Layer1" zOrder:0];
@@ -39,6 +42,11 @@
         
         [button setOnPressWithSelector:@selector(onButtonPressed) andTarget:self];
         [button setOnReleaseWithSelector:@selector(onButtonReleased) andTarget:self];
+        
+        CGSize winSize = [[CCDirector sharedDirector] winSize];
+        
+        FGUILabel *label = [layer1 createLabelWithName:@"Label1" string:@"Hello, world!" fontFile:@"HeadingFont.fnt" zOrder:10];
+        label.position = ccp(winSize.width / 2, winSize.height - 50);
 	}
 	
 	return self;

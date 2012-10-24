@@ -135,6 +135,9 @@
 		1CDF06AA163796E300F3FCA1 /* FGUI.m in Sources */ = {isa = PBXBuildFile; fileRef = 1CDF06A9163796E300F3FCA1 /* FGUI.m */; };
 		1CDF06B116379C6000F3FCA1 /* Spritesheet.plist in Resources */ = {isa = PBXBuildFile; fileRef = 1CDF06AF16379C6000F3FCA1 /* Spritesheet.plist */; };
 		1CDF06B216379C6000F3FCA1 /* Spritesheet.png in Resources */ = {isa = PBXBuildFile; fileRef = 1CDF06B016379C6000F3FCA1 /* Spritesheet.png */; };
+		1CDF08711637C49700F3FCA1 /* CCLabelBNFont.m in Sources */ = {isa = PBXBuildFile; fileRef = 1CDF08701637C49700F3FCA1 /* CCLabelBNFont.m */; };
+		1CDF08741637C7A800F3FCA1 /* BodyFont.fnt in Resources */ = {isa = PBXBuildFile; fileRef = 1CDF08721637C7A800F3FCA1 /* BodyFont.fnt */; };
+		1CDF08751637C7A800F3FCA1 /* HeadingFont.fnt in Resources */ = {isa = PBXBuildFile; fileRef = 1CDF08731637C7A800F3FCA1 /* HeadingFont.fnt */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -402,6 +405,10 @@
 		1CDF06A9163796E300F3FCA1 /* FGUI.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = FGUI.m; path = ../../../FGUI.m; sourceTree = "<group>"; };
 		1CDF06AF16379C6000F3FCA1 /* Spritesheet.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Spritesheet.plist; path = Resources/Spritesheet.plist; sourceTree = "<group>"; };
 		1CDF06B016379C6000F3FCA1 /* Spritesheet.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = Spritesheet.png; path = Resources/Spritesheet.png; sourceTree = "<group>"; };
+		1CDF086F1637C49700F3FCA1 /* CCLabelBNFont.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CCLabelBNFont.h; path = libs/CCLabelBNFont.h; sourceTree = "<group>"; };
+		1CDF08701637C49700F3FCA1 /* CCLabelBNFont.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = CCLabelBNFont.m; path = libs/CCLabelBNFont.m; sourceTree = "<group>"; };
+		1CDF08721637C7A800F3FCA1 /* BodyFont.fnt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = BodyFont.fnt; path = Resources/BodyFont.fnt; sourceTree = "<group>"; };
+		1CDF08731637C7A800F3FCA1 /* HeadingFont.fnt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = HeadingFont.fnt; path = Resources/HeadingFont.fnt; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -476,6 +483,8 @@
 		1CDF05201637969F00F3FCA1 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				1CDF08721637C7A800F3FCA1 /* BodyFont.fnt */,
+				1CDF08731637C7A800F3FCA1 /* HeadingFont.fnt */,
 				1CDF06AF16379C6000F3FCA1 /* Spritesheet.plist */,
 				1CDF06B016379C6000F3FCA1 /* Spritesheet.png */,
 				1CDF05211637969F00F3FCA1 /* Default.png */,
@@ -504,6 +513,8 @@
 				1CDF053B1637969F00F3FCA1 /* cocos2d */,
 				1CDF0652163796A100F3FCA1 /* CocosDenshion */,
 				1CDF0661163796A200F3FCA1 /* kazmath */,
+				1CDF086F1637C49700F3FCA1 /* CCLabelBNFont.h */,
+				1CDF08701637C49700F3FCA1 /* CCLabelBNFont.m */,
 			);
 			name = libs;
 			sourceTree = "<group>";
@@ -903,6 +914,8 @@
 				1CDF0677163796A200F3FCA1 /* ChangeLog in Resources */,
 				1CDF06B116379C6000F3FCA1 /* Spritesheet.plist in Resources */,
 				1CDF06B216379C6000F3FCA1 /* Spritesheet.png in Resources */,
+				1CDF08741637C7A800F3FCA1 /* BodyFont.fnt in Resources */,
+				1CDF08751637C7A800F3FCA1 /* HeadingFont.fnt in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1017,6 +1030,7 @@
 				1CDF0699163796A200F3FCA1 /* AppDelegate.m in Sources */,
 				1CDF06A7163796C500F3FCA1 /* TestScene.m in Sources */,
 				1CDF06AA163796E300F3FCA1 /* FGUI.m in Sources */,
+				1CDF08711637C49700F3FCA1 /* CCLabelBNFont.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

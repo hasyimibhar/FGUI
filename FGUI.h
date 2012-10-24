@@ -12,6 +12,7 @@
 @class FGUILayer;
 @class FGUISprite;
 @class FGUIButton;
+@class FGUILabel;
 @class FGUIElement;
 
 typedef void(^VoidBlock)(void);
@@ -40,6 +41,9 @@ typedef void(^VoidBlock)(void);
 - (FGUISprite *)createSpriteWithName:(NSString *)aName spriteFrame:(CCSpriteFrame *)aSpriteFrame zOrder:(int)zOrder;
 - (void)destroySprite:(FGUISprite *)aSprite;
 
+- (FGUILabel *)createLabelWithName:(NSString *)aName string:(NSString *)aString fontFile:(NSString *)aFontFile zOrder:(int)zOrder;
+- (void)destroyLabel:(FGUILabel *)aLabel;
+
 - (BOOL)touchBegan:(CGPoint)localPosition;
 - (void)touchMoved:(CGPoint)localPosition;
 - (void)touchEnded:(CGPoint)localPosition;
@@ -65,6 +69,8 @@ typedef void(^VoidBlock)(void);
 - (FGUILayer *)createLayerWithName:(NSString *)aName zOrder:(int)zOrder;
 - (void)destroyLayer:(FGUILayer *)aLayer;
 - (void)destroyLayerWithName:(NSString *)aLayerName;
+
+@property (readonly, assign, nonatomic) CCSpriteBatchNode * batchNode;
 
 @end
 
@@ -109,5 +115,11 @@ typedef void(^VoidBlock)(void);
 }
 
 @property (readwrite, assign, nonatomic) CCSpriteFrame * spriteFrame;
+
+@end
+
+@interface FGUILabel : FGUIElement
+
+@property (readwrite, copy, nonatomic) NSString * string;
 
 @end
