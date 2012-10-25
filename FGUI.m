@@ -29,6 +29,11 @@
 @interface FGUIElement ()
 {
     FGUIElement *activeChild;
+    
+@public
+    kmMat3 translateMatrix;
+    kmMat3 scaleMatrix;
+    kmMat3 rotateMatrix;
 }
 
 + (id)elementWithRoot:(FGUIRoot *)aRoot andName:(NSString *)aName andParent:(FGUIElement *)aParent;
@@ -39,10 +44,7 @@
 - (void)_touchMoved:(CGPoint)localPosition;
 - (void)_touchEnded:(CGPoint)localPosition;
 - (BOOL)_isInside:(CGPoint)position;
-- (void)_updatePosition;
-- (void)_updateScale;
-- (void)_updateScaleX;
-- (void)_updateScaleY;
+- (void)_update;
 
 @end
 
@@ -110,6 +112,10 @@
         
         childTable  = [[NSMutableDictionary alloc] init];
         activeChild = nil;
+        
+        kmMat3Identity(&translateMatrix);
+        kmMat3Identity(&scaleMatrix);
+        kmMat3Identity(&rotateMatrix);
 	}
 	
 	return self;
@@ -147,43 +153,65 @@
 - (void)setScale:(float)scale
 {
     [super setScale:scale];
+    scaleMatrix.mat[0] = scale;
+    scaleMatrix.mat[4] = scale;
+    [self _update];
     
     for (FGUIElement *aChild in [childTable allValues])
     {
-        [aChild _updateScale];
-        [aChild setScale:scale];
+        [aChild _update];
     }
 }
 
 - (void)setScaleX:(float)scaleX
 {
     [super setScaleX:scaleX];
+    scaleMatrix.mat[0] = scaleX;
+    [self _update];
     
     for (FGUIElement *aChild in [childTable allValues])
     {
-        [aChild _updateScaleX];
-        [aChild setScaleX:scaleX];
+        [aChild _update];
     }
 }
 
 - (void)setScaleY:(float)scaleY
 {
     [super setScaleY:scaleY];
+    scaleMatrix.mat[4] = scaleY;
+    [self _update];
     
     for (FGUIElement *aChild in [childTable allValues])
     {
-        [aChild _updateScaleY];
-        [aChild setScaleY:scaleY];
+        [aChild _update];
     }
 }
 
 - (void)setPosition:(CGPoint)position
 {
     [super setPosition:position];
+    translateMatrix.mat[6] = position.x;
+    translateMatrix.mat[7] = position.y;
+    [self _update];
     
     for (FGUIElement *aChild in [childTable allValues])
     {
-        [aChild _updatePosition];
+        [aChild _update];
+    }
+}
+
+- (void)setRotation:(float)rotation
+{
+    [super setRotation:rotation];
+    rotateMatrix.mat[0] = cosf(rotation);
+    rotateMatrix.mat[1] = -sinf(rotation);
+    rotateMatrix.mat[3] = sinf(rotation);
+    rotateMatrix.mat[4] = cosf(rotation);
+    [self _update];
+    
+    for (FGUIElement *aChild in [childTable allValues])
+    {
+        [aChild _update];
     }
 }
 
@@ -344,14 +372,66 @@
     
 }
 
-- (CGPoint)worldPosition
+- (kmMat3)transformationMatrix
 {
-    if (parent == nil)
+    kmMat3 transformationMatrix;
+    
+    kmMat3Multiply(&transformationMatrix, &translateMatrix, &rotateMatrix);
+    kmMat3Multiply(&transformationMatrix, &transformationMatrix, &scaleMatrix);
+    
+    if (parent != nil)
     {
-        return self.position;
+        kmMat3 parentMatrix = [parent transformationMatrix];
+        kmMat3Multiply(&transformationMatrix, &transformationMatrix, &parentMatrix);
     }
     
-    return ccpAdd([parent worldPosition], self.position);
+    return transformationMatrix;
+}
+
+- (CGPoint)worldPosition
+{
+    kmVec2 p;
+    p.x = self.position.x;
+    p.y = self.position.y;
+    
+    if (self.ignoreAnchorPointForPosition)
+    {
+        p.x += self.anchorPointInPoints.x;
+        p.y += self.anchorPointInPoints.y;
+    }
+    
+    if (parent)
+    {
+        kmMat3 m = [parent transformationMatrix];
+        kmVec2Transform(&p, &p, &m);
+    }
+    
+    return ccp(p.x, p.y);
+}
+
+- (float)worldRotation
+{
+    float worldRotation = self.rotation;
+    
+    if (parent)
+    {
+        worldRotation += [parent worldRotation];
+    }
+    
+    return worldRotation;
+}
+
+- (CGPoint)worldScale
+{
+    CGPoint worldScale = ccp(self.scaleX, self.scaleY);
+    
+    if (parent)
+    {
+        CGPoint parentScale = [parent worldScale];
+        worldScale = ccp(worldScale.x * parentScale.x, worldScale.y * parentScale.y);
+    }
+
+    return worldScale;
 }
 
 - (CGPoint)convertToLocalPosition:(CGPoint)aPosition
@@ -359,22 +439,7 @@
     return ccpSub(aPosition, ccpSub(self.position, ccp(self.contentSize.width * self.anchorPoint.x, self.contentSize.height * self.anchorPoint.y)));
 }
 
-- (void)_updatePosition
-{
-    
-}
-
-- (void)_updateScale
-{
-    
-}
-
-- (void)_updateScaleX
-{
-    
-}
-
-- (void)_updateScaleY
+- (void)_update
 {
     
 }
@@ -591,34 +656,10 @@
     [sprite setDisplayFrame:isEnabled ? normalSpriteFrame : disabledSpriteFrame];
 }
 
-- (void)setPosition:(CGPoint)position
-{
-    [super setPosition:position];
-    sprite.position = [self worldPosition];
-}
-
 - (void)setAnchorPoint:(CGPoint)anchorPoint
 {
     [super setAnchorPoint:anchorPoint];
     sprite.anchorPoint = anchorPoint;
-}
-
-- (void)setScale:(float)scale
-{
-    [super setScale:scale];
-    sprite.scale = scale * (parent ? parent.scale : 1);
-}
-
-- (void)setScaleX:(float)scaleX
-{
-    [super setScaleX:scaleX];
-    sprite.scaleX = scaleX;
-}
-
-- (void)setScaleY:(float)scaleY
-{
-    [super setScaleY:scaleY];
-    sprite.scaleY = scaleY;
 }
 
 - (id)initWithRoot:(FGUIRoot *)aRoot andName:(NSString *)aName andParent:(FGUIElement *)aParent andSpriteFrameArray:(NSArray *)aSpriteFrameArray
@@ -705,24 +746,14 @@
     }
 }
 
-- (void)_updatePosition
+- (void)_update
 {
     sprite.position = [self worldPosition];
-}
-
-- (void)_updateScale
-{
-    sprite.scale = self.scale * (parent ? parent.scale : 1);
-}
-
-- (void)_updateScaleX
-{
-    sprite.scaleX = self.scaleX * (parent ? parent.scaleX : 1);
-}
-
-- (void)_updateScaleY
-{
-    sprite.scaleY = self.scaleY * (parent ? parent.scaleY : 1);
+    sprite.rotation = CC_RADIANS_TO_DEGREES([self worldRotation]);
+    
+    CGPoint scale = [self worldScale];
+    sprite.scaleX = scale.x;
+    sprite.scaleY = scale.y;
 }
 
 @end
@@ -744,34 +775,10 @@
     self.contentSize = sprite.contentSize;
 }
 
-- (void)setPosition:(CGPoint)position
-{
-    [super setPosition:position];
-    sprite.position = [self worldPosition];
-}
-
 - (void)setAnchorPoint:(CGPoint)anchorPoint
 {
     [super setAnchorPoint:anchorPoint];
     sprite.anchorPoint = anchorPoint;
-}
-
-- (void)setScale:(float)scale
-{
-    [super setScale:scale];
-    sprite.scale = scale * (parent ? parent.scale : 1);
-}
-
-- (void)setScaleX:(float)scaleX
-{
-    [super setScaleX:scaleX];
-    sprite.scaleX = scaleX;
-}
-
-- (void)setScaleY:(float)scaleY
-{
-    [super setScaleY:scaleY];
-    sprite.scaleY = scaleY;
 }
 
 - (id)initWithRoot:(FGUIRoot *)aRoot andName:(NSString *)aName andParent:(FGUIElement *)aParent andSpriteFrame:(CCSpriteFrame *)aSpriteFrame
@@ -793,24 +800,14 @@
 	[super dealloc];
 }
 
-- (void)_updatePosition
+- (void)_update
 {
     sprite.position = [self worldPosition];
-}
-
-- (void)_updateScale
-{
-    sprite.scale = self.scale * (parent ? parent.scale : 1);
-}
-
-- (void)_updateScaleX
-{
-    sprite.scaleX = self.scaleX * (parent ? parent.scaleX : 1);
-}
-
-- (void)_updateScaleY
-{
-    sprite.scaleY = self.scaleY * (parent ? parent.scaleY : 1);
+    sprite.rotation = CC_RADIANS_TO_DEGREES([self worldRotation]);
+    
+    CGPoint scale = [self worldScale];
+    sprite.scaleX = scale.x;
+    sprite.scaleY = scale.y;
 }
 
 @end
@@ -824,34 +821,10 @@
 
 @dynamic string;
 
-- (void)setPosition:(CGPoint)position
-{
-    [super setPosition:position];
-    label.position = [self worldPosition];
-}
-
 - (void)setAnchorPoint:(CGPoint)anchorPoint
 {
     [super setAnchorPoint:anchorPoint];
     label.anchorPoint = anchorPoint;
-}
-
-- (void)setScale:(float)scale
-{
-    [super setScale:scale];
-    label.scale = scale * (parent ? parent.scale : 1);
-}
-
-- (void)setScaleX:(float)scaleX
-{
-    [super setScaleX:scaleX];
-    label.scaleX = scaleX;
-}
-
-- (void)setScaleY:(float)scaleY
-{
-    [super setScaleY:scaleY];
-    label.scaleY = scaleY;
 }
 
 - (NSString *)string
@@ -886,27 +859,14 @@
     [super dealloc];
 }
 
-- (void)_updatePosition
+- (void)_update
 {
     label.position = [self worldPosition];
-}
-
-- (void)_updateScale
-{
-    label.scale = self.scale * (parent ? parent.scale : 1);
-    label.position = ccpAdd(self.parent.position, ccpMult(self.position, self.parent.scale));
-}
-
-- (void)_updateScaleX
-{
-    label.scaleX = self.scaleX * (parent ? parent.scaleX : 1);
-    label.position = ccpAdd(self.parent.position, ccp(self.position.x * self.parent.scaleX, self.position.y * self.parent.scaleY));
-}
-
-- (void)_updateScaleY
-{
-    label.scaleY = self.scaleY * (parent ? parent.scaleY : 1);
-    label.position = ccpAdd(self.parent.position, ccp(self.position.x * self.parent.scaleX, self.position.y * self.parent.scaleY));
+    label.rotation = CC_RADIANS_TO_DEGREES([self worldRotation]);
+    
+    CGPoint scale = [self worldScale];
+    label.scaleX = scale.x;
+    label.scaleY = scale.y;
 }
 
 @end

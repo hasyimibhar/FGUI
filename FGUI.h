@@ -54,6 +54,8 @@ typedef void(^VoidBlock)(void);
 - (void)touchEnded:(CGPoint)localPosition;
 
 - (CGPoint)worldPosition;
+- (float)worldRotation;
+- (CGPoint)worldScale;
 - (CGPoint)convertToLocalPosition:(CGPoint)aPosition;
 
 @property (readonly, assign, nonatomic) NSString * name;
