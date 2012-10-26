@@ -320,7 +320,8 @@
 
 - (BOOL)_isInside:(CGPoint)position
 {
-    return CGRectContainsPoint(CGRectMake(0, 0, self.contentSize.width, self.contentSize.height), position);
+    return CGRectContainsPoint(CGRectMake(0, 0, self.contentSize.width, self.contentSize.height), [self convertToNodeSpace:position]);
+//    return CGRectContainsPoint(CGRectMake(self.position.x, self.position.y, self.contentSize.width, self.contentSize.height), position);
 }
 
 - (BOOL)_touchBegan:(CGPoint)localPosition
@@ -331,7 +332,7 @@
     {
         for (FGUIElement *aChild in [childTable allValues])
         {
-            if ([aChild _touchBegan:[aChild convertToLocalPosition:localPosition]])
+            if ([aChild _touchBegan:localPosition])
             {
                 activeChild = aChild;
                 break;
@@ -347,13 +348,13 @@
 - (void)_touchMoved:(CGPoint)localPosition
 {
     [self touchMoved:localPosition];
-    [activeChild _touchMoved:[activeChild convertToLocalPosition:localPosition]];
+    [activeChild _touchMoved:localPosition];
 }
 
 - (void)_touchEnded:(CGPoint)localPosition
 {
     [self touchEnded:localPosition];
-    [activeChild _touchEnded:[activeChild convertToLocalPosition:localPosition]];
+    [activeChild _touchEnded:localPosition];
     activeChild = nil;
 }
 
@@ -432,11 +433,6 @@
     }
 
     return worldScale;
-}
-
-- (CGPoint)convertToLocalPosition:(CGPoint)aPosition
-{
-    return ccpSub(aPosition, ccpSub(self.position, ccp(self.contentSize.width * self.anchorPoint.x, self.contentSize.height * self.anchorPoint.y)));
 }
 
 - (void)_update
@@ -541,7 +537,7 @@
     
     for (FGUILayer *aLayer in [layerTable allValues])
     {
-        if ([aLayer _isInside:[aLayer convertToLocalPosition:touchPosition]] && [aLayer _touchBegan:[aLayer convertToLocalPosition:touchPosition]])
+        if ([aLayer _isInside:touchPosition] && [aLayer _touchBegan:touchPosition])
         {
             activeLayer = aLayer;
             return YES;
@@ -554,16 +550,16 @@
 - (void)ccTouchMoved:(UITouch *)touch withEvent:(UIEvent *)event
 {
     CGPoint touchPosition = [[CCDirector sharedDirector] convertToGL:[touch locationInView:touch.view]];
-    if ([activeLayer _isInside:[activeLayer convertToLocalPosition:touchPosition]])
+    if ([activeLayer _isInside:touchPosition])
     {
-        [activeLayer _touchMoved:[activeLayer convertToLocalPosition:touchPosition]];
+        [activeLayer _touchMoved:touchPosition];
     }
 }
 
 - (void)ccTouchEnded:(UITouch *)touch withEvent:(UIEvent *)event
 {
     CGPoint touchPosition = [[CCDirector sharedDirector] convertToGL:[touch locationInView:touch.view]];
-    [activeLayer _touchEnded:[activeLayer convertToLocalPosition:touchPosition]];
+    [activeLayer _touchEnded:touchPosition];
     activeLayer = nil;
 }
 
