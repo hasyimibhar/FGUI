@@ -15,6 +15,8 @@
     FGUISprite *sprite = [self createSpriteWithName:@"Sprite" spriteFrame:CC_SPRITEFRAME(@"Sprite.png") zOrder:0];
     sprite.position = ccp(300, 300);
     
+    [sprite runAction:[CCRepeatForever actionWithAction:[CCRotateBy actionWithDuration:2.0f angle:360]]];
+    
     FGUIButton *button = [sprite createButtonWithName:@"Button1" spriteFrameArray:@[CC_SPRITEFRAME(@"Button_Normal.png"), CC_SPRITEFRAME(@"Button_Selected.png"), CC_SPRITEFRAME(@"Button_Disabled.png")] zOrder:1];
     button.anchorPoint = ccp(0.5f, 0);
     button.position = ccp(50, 50);

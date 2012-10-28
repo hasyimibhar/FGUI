@@ -59,11 +59,6 @@
 @interface FGUIElement ()
 {
     FGUIElement *activeChild;
-    
-@public
-    kmMat3 translateMatrix;
-    kmMat3 scaleMatrix;
-    kmMat3 rotateMatrix;
 }
 
 + (id)elementWithRoot:(FGUIRoot *)aRoot andName:(NSString *)aName andParent:(FGUIElement *)aParent;
@@ -144,10 +139,6 @@
         
         childTable  = [[NSMutableDictionary alloc] init];
         activeChild = nil;
-        
-        kmMat3Identity(&translateMatrix);
-        kmMat3Identity(&scaleMatrix);
-        kmMat3Identity(&rotateMatrix);
 	}
 	
 	return self;
@@ -196,8 +187,6 @@
 - (void)setScale:(float)scale
 {
     [super setScale:scale];
-    scaleMatrix.mat[0] = scale;
-    scaleMatrix.mat[4] = scale;
     [self _update];
     
     for (FGUIElement *aChild in [childTable allValues])
@@ -209,7 +198,6 @@
 - (void)setScaleX:(float)scaleX
 {
     [super setScaleX:scaleX];
-    scaleMatrix.mat[0] = scaleX;
     [self _update];
     
     for (FGUIElement *aChild in [childTable allValues])
@@ -221,7 +209,6 @@
 - (void)setScaleY:(float)scaleY
 {
     [super setScaleY:scaleY];
-    scaleMatrix.mat[4] = scaleY;
     [self _update];
     
     for (FGUIElement *aChild in [childTable allValues])
@@ -233,8 +220,6 @@
 - (void)setPosition:(CGPoint)position
 {
     [super setPosition:position];
-    translateMatrix.mat[6] = position.x;
-    translateMatrix.mat[7] = position.y;
     [self _update];
     
     for (FGUIElement *aChild in [childTable allValues])
@@ -246,10 +231,6 @@
 - (void)setRotation:(float)rotation
 {
     [super setRotation:rotation];
-    rotateMatrix.mat[0] = cosf(rotation);
-    rotateMatrix.mat[1] = -sinf(rotation);
-    rotateMatrix.mat[3] = sinf(rotation);
-    rotateMatrix.mat[4] = cosf(rotation);
     [self _update];
     
     for (FGUIElement *aChild in [childTable allValues])
@@ -441,50 +422,9 @@
     
 }
 
-- (kmMat3)transformationMatrix
-{
-    kmMat3 transformationMatrix;
-    
-    kmMat3 actualTranslateMatrix = translateMatrix;
-    
-    // Adjust anchor point
-    if (!CGPointEqualToPoint(self.anchorPointInPoints, CGPointZero))
-    {
-        actualTranslateMatrix.mat[6] -= self.anchorPointInPoints.x;
-        actualTranslateMatrix.mat[7] -= self.anchorPointInPoints.y;
-    }
-    
-    kmMat3Multiply(&transformationMatrix, &actualTranslateMatrix, &rotateMatrix);
-    kmMat3Multiply(&transformationMatrix, &transformationMatrix, &scaleMatrix);
-    
-    if (fguiParent != nil)
-    {
-        kmMat3 parentMatrix = [fguiParent transformationMatrix];
-        kmMat3Multiply(&transformationMatrix, &transformationMatrix, &parentMatrix);
-    }
-    
-    return transformationMatrix;
-}
-
 - (CGPoint)worldPosition
 {
-    kmVec2 p;
-    p.x = self.position.x;
-    p.y = self.position.y;
-    
-    if (self.ignoreAnchorPointForPosition)
-    {
-        p.x += self.anchorPointInPoints.x;
-        p.y += self.anchorPointInPoints.y;
-    }
-    
-    if (fguiParent)
-    {
-        kmMat3 m = [fguiParent transformationMatrix];
-        kmVec2Transform(&p, &p, &m);
-    }
-    
-    return ccp(p.x, p.y);
+    return [self.parent convertToWorldSpace:self.position];
 }
 
 - (float)worldRotation
