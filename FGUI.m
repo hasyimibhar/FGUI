@@ -299,7 +299,6 @@
     
     FGUIButton *button = [FGUIButton buttonWithRoot:root andName:aName andParent:self andSpriteFrameArray:aSpriteFrameArray];
     [self addChild:button z:zOrder];
-    [root.batchNode addChild:button->sprite];
     childTable[aName] = button;
     
     return button;
@@ -312,7 +311,6 @@
     assert([aButton isKindOfClass:FGUIButton.class]);
     assert([self.children containsObject:aButton]);
     
-    [root.batchNode removeChild:aButton->sprite cleanup:YES];
     [aButton removeFromParentAndCleanup:YES];
     [childTable removeObjectForKey:aButton.name];
 }
@@ -325,7 +323,6 @@
     
     FGUISprite *sprite = [FGUISprite spriteWithRoot:root andName:aName andParent:self andSpriteFrame:aSpriteFrame];
     [self addChild:sprite z:zOrder];
-    [root.batchNode addChild:sprite->sprite];
     childTable[aName] = sprite;
     
     return sprite;
@@ -338,7 +335,6 @@
     assert([aSprite isKindOfClass:FGUISprite.class]);
     assert([self.children containsObject:aSprite]);
     
-    [root.batchNode removeChild:aSprite->sprite cleanup:YES];
     [aSprite removeFromParentAndCleanup:YES];
     [childTable removeObjectForKey:aSprite.name];
 }
@@ -352,7 +348,6 @@
     FGUILabel *label = [FGUILabel labelWithRoot:root andName:aName andParent:self andFile:aFontFile];
     label.string = aString;
     [self addChild:label z:zOrder];
-    [root.batchNode addChild:label->label];
     childTable[aName] = label;
     
     return label;
@@ -365,7 +360,6 @@
     assert([aLabel isKindOfClass:FGUILabel.class]);
     assert([self.children containsObject:aLabel]);
     
-    [root.batchNode removeChild:aLabel->label cleanup:YES];
     [aLabel removeFromParentAndCleanup:YES];
     [childTable removeObjectForKey:aLabel.name];
 }
@@ -378,22 +372,24 @@
 - (BOOL)_touchBegan:(CGPoint)localPosition
 {
     activeChild = nil;
+    BOOL isTouchSwallowed = NO;
     
-    if ([self touchBegan:localPosition])
+    for (FGUIElement *aChild in [childTable allValues])
     {
-        for (FGUIElement *aChild in [childTable allValues])
+        if ([aChild _touchBegan:localPosition])
         {
-            if ([aChild _touchBegan:localPosition])
-            {
-                activeChild = aChild;
-                break;
-            }
+            activeChild = aChild;
+            isTouchSwallowed = YES;
+            break;
         }
-        
-        return childTable.count == 0 || activeChild != nil;
     }
     
-    return NO;
+    if (activeChild == nil)
+    {
+        isTouchSwallowed = [self touchBegan:localPosition];
+    }
+    
+    return isTouchSwallowed;
 }
 
 - (void)_touchMoved:(CGPoint)localPosition
@@ -411,7 +407,7 @@
 
 - (BOOL)touchBegan:(CGPoint)localPosition
 {
-    return childTable.count > 0;
+    return NO;
 }
 
 - (void)touchMoved:(CGPoint)localPosition
@@ -724,6 +720,18 @@
 	[super dealloc];
 }
 
+- (void)onEnter
+{
+    [super onEnter];
+    [root.batchNode addChild:sprite];
+}
+
+- (void)onExit
+{
+    [sprite removeFromParentAndCleanup:YES];
+    [super onExit];
+}
+
 - (void)setSpriteFramesWithArray:(NSArray *)aSpriteFrameArray
 {
     assert(aSpriteFrameArray.count == 3);
@@ -830,6 +838,18 @@
 	[super dealloc];
 }
 
+- (void)onEnter
+{
+    [super onEnter];
+    [root.batchNode addChild:sprite];
+}
+
+- (void)onExit
+{
+    [sprite removeFromParentAndCleanup:YES];
+    [super onExit];
+}
+
 - (void)_update
 {
     sprite.position = [self worldPosition];
@@ -866,6 +886,7 @@
 {
     assert(string);
     label.string = string;
+    self.contentSize = label.contentSize;
 }
 
 - (id)initWithRoot:(FGUIRoot *)aRoot andName:(NSString *)aName andParent:(FGUIElement *)aParent andFile:(NSString *)aFile
@@ -887,6 +908,18 @@
 {
     [label release];
     [super dealloc];
+}
+
+- (void)onEnter
+{
+    [super onEnter];
+    [root.batchNode addChild:label];
+}
+
+- (void)onExit
+{
+    [label removeFromParentAndCleanup:YES];
+    [super onExit];
 }
 
 - (void)_update
