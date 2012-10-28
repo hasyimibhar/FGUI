@@ -57,4 +57,4 @@ FGUI elements are really just subclasses of CCNode. You can run CCAction on them
 	FGUILabel *myLabel = [layer1 createLabelWithName:@"MyLabel" string:@"I'm spinning~" fontFile:@"MyBitmapFont" zOrder:0];
         
     // Spin spin spin!
-    [myLabel runAction:[CCRepeatForever actionWithAction:[CCRotateBy actionWithDuration:1.0f angle:CC_DEGREES_TO_RADIANS(360)]]];
+    [myLabel runAction:[CCRepeatForever actionWithAction:[CCRotateBy actionWithDuration:1.0f angle:360]]];
