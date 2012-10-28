@@ -411,7 +411,7 @@
 
 - (BOOL)touchBegan:(CGPoint)localPosition
 {
-    return YES;
+    return childTable.count > 0;
 }
 
 - (void)touchMoved:(CGPoint)localPosition
