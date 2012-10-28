@@ -17,13 +17,16 @@ FGUI solves this problem by not using `CCMenu` and `CCMenuItem` at all. Buttons 
 - OSX support
 - ~~Proper transformation using matrices (currently only supports positioning and scaling)~~
 - ~~Proper z-ordering (same convention as cocos2d)~~
-- Change the API, replacing all the `create` methods with one `addElement`, so that the user can create their own elements
-- Folowing the change above, I will probably need to separate all the classes into individual .m/.h pair (it's starting to confuse me!)
-- More documentation (especially on how you can create your own modular GUI groups by subclassing `FGUILayer`)
+- ~~Change the API, replacing all the `create` methods with one `addElement`, so that the user can create their own elements~~
+- ~~Folowing the change above, I will probably need to separate all the classes into individual .m/.h pair (it's starting to confuse me!)~~
+- Modify the code so that `setup` method is not necessary, and initialization can be done inside the `init` method
 
 ###Usage
 
 FGUI uses the familiar scene-graph style of structuring elements in cocos2d.
+
+#####FGUIRoot
+`FGUIRoot` is obviously the root of the entire FGUI scene graph. Each `FGUIRoot` contains a `CCSpriteBatchNode`, which should contain all of your UI assets packed together (using [Zwoptex](http://zwopple.com/zwoptex/), [TexturePacker](http://www.codeandweb.com/texturepacker), etc).
 
 	#import "FGUI.h"
 
@@ -31,23 +34,24 @@ FGUI uses the familiar scene-graph style of structuring elements in cocos2d.
 	FGUIRoot *root = [[FGUI alloc] initWithFile:@"Spritesheet.png"];
 	[self addChild:root];
 	
-	// Create layer
-	FGUILayer *layer = [root createLayerWithName:@"Layer1" zOrder:0];
-	
 #####FGUILabel
 	
-	// Create label as a child of layer
-	FGUILabel *myLabel = [layer createLabelWithName:@"MyLabel" string:@"Hello, world!" fontFile:@"MyBitmapFont.fnt" zOrder:10];
+	// Create label
+	FGUILabel *myLabel = [FGUILabel labelWithString:@"Hello, world!" file:@"MyBitmapFont.fnt"];
+	// Then add it to the root
+	[root addElement:myLabel name:@"MyLabel"];
 	
 #####FGUISprite
 	
-	// Create sprite as a child of layer
-	FGUISprite *sprite = [self createSpriteWithName:@"MySprite" spriteFrame:CC_SPRITEFRAME(@"MySprint.png") zOrder:69];
+	FGUISprite *sprite = [FGUISprite spriteWithSpriteFrame:CC_SPRITEFRAME(@"Sprite.png")];
+	
+	// An element can be added as a child of any other element! Not just the root!
+	[myLabel addElement:sprite name:@"Sprite"];
 	
 #####FGUIButton
 	
-	// Create myButton as a child of layer
-	FGUIButton *myButton = [layer createButtonWithName:@"Button1" spriteFrameArray:@[CC_SPRITEFRAME(@"Button_Normal.png"), CC_SPRITEFRAME(@"Button_Selected.png"), CC_SPRITEFRAME(@"Button_Disabled.png")] zOrder:1];
+	FGUIButton *myButton = [FGUIButton buttonWithSpriteFrameArray:@[CC_SPRITEFRAME(@"Button_Normal.png"), CC_SPRITEFRAME(@"Button_Selected.png"), CC_SPRITEFRAME(@"Button_Disabled.png")]];
+	[root addElement:myButton name:@"MyButton" zOrder:100];
 	
 	// Use block for press and release callbacks
 	
@@ -67,10 +71,11 @@ FGUI uses the familiar scene-graph style of structuring elements in cocos2d.
 #####Actions
 FGUI elements are really just subclasses of `CCNode`. You can run `CCAction` on them!
 
-	FGUILabel *myLabel = [layer createLabelWithName:@"MyLabel" string:@"I'm spinning~" fontFile:@"MyBitmapFont" zOrder:0];
+	FGUILabel *spinningLabel = [FGUILabel labelWithString:@"I'm spinning~" file:@"MyBitmapFont.fnt"];
+	[root addElement:spinningLabel name:@"SpinningLabel"];
         
     // Spin spin spin!
-    [myLabel runAction:[CCRepeatForever actionWithAction:[CCRotateBy actionWithDuration:1.0f angle:360]]];
+    [spinningLabel runAction:[CCRepeatForever actionWithAction:[CCRotateBy actionWithDuration:1.0f angle:360]]];
     
 ###CCLabelBNFont
 `CCLabelBNFont` class comes with the source code. It's a friend of `CCLabelBMFont` (note the one letter difference), which basically allows bitmap fonts to be added as a child of `CCSpriteBatchNode`. Kudos to **mikezang** for writing the class, otherwise the "one batch count" will never be achievable. :)
