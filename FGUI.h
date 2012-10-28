@@ -53,15 +53,25 @@ typedef void(^VoidBlock)(void);
     NSMutableArray *childArray;
 }
 
+- (FGUINode *)createNodeWithName:(NSString *)aName;
 - (FGUINode *)createNodeWithName:(NSString *)aName zOrder:(NSInteger)zOrder;
+
+- (FGUILayer *)createLayerWithName:(NSString *)aName;
 - (FGUILayer *)createLayerWithName:(NSString *)aName zOrder:(NSInteger)zOrder;
+
+- (void)addLayer:(FGUILayer *)aLayer withName:(NSString *)aName;
 - (void)addLayer:(FGUILayer *)aLayer withName:(NSString *)aName zOrder:(NSInteger)aZOrder;
 
+- (FGUIButton *)createButtonWithName:(NSString *)aName spriteFrameArray:(NSArray *)aSpriteFrameArray;
 - (FGUIButton *)createButtonWithName:(NSString *)aName spriteFrameArray:(NSArray *)aSpriteFrameArray zOrder:(NSInteger)aZOrder;
 
+- (FGUISprite *)createSpriteWithName:(NSString *)aName spriteFrame:(CCSpriteFrame *)aSpriteFrame;
 - (FGUISprite *)createSpriteWithName:(NSString *)aName spriteFrame:(CCSpriteFrame *)aSpriteFrame zOrder:(NSInteger)aZOrder;
 
+- (FGUILabel *)createLabelWithName:(NSString *)aName string:(NSString *)aString fontFile:(NSString *)aFontFile;
 - (FGUILabel *)createLabelWithName:(NSString *)aName string:(NSString *)aString fontFile:(NSString *)aFontFile zOrder:(NSInteger)aZOrder;
+
+- (FGUILabel *)createLabelWithName:(NSString *)aName string:(NSString *)aString fontFile:(NSString *)aFontFile width:(float)aWidth alignment:(CCTextAlignment)aAlignment;
 - (FGUILabel *)createLabelWithName:(NSString *)aName string:(NSString *)aString fontFile:(NSString *)aFontFile width:(float)aWidth alignment:(CCTextAlignment)aAlignment zOrder:(NSInteger)aZOrder;
 
 - (void)destroyElement:(FGUIElement *)aElement;
@@ -91,8 +101,11 @@ typedef void(^VoidBlock)(void);
 
 - (id)initWithFile:(NSString *)aFile;
 
-- (FGUILayer *)createLayerWithName:(NSString *)aName zOrder:(int)zOrder;
-- (void)addLayer:(FGUILayer *)aLayer withName:(NSString *)aName zOrder:(int)zOrder;
+- (FGUILayer *)createLayerWithName:(NSString *)aName;
+- (FGUILayer *)createLayerWithName:(NSString *)aName zOrder:(NSInteger)zOrder;
+
+- (void)addLayer:(FGUILayer *)aLayer withName:(NSString *)aName;
+- (void)addLayer:(FGUILayer *)aLayer withName:(NSString *)aName zOrder:(NSInteger)zOrder;
 
 - (void)destroyLayer:(FGUILayer *)aLayer;
 - (void)destroyLayerWithName:(NSString *)aLayerName;

@@ -23,7 +23,7 @@
     
     [button runAction:[CCRepeatForever actionWithAction:[CCRotateBy actionWithDuration:2.0f angle:360]]];
     
-    FGUIButton *button2 = [sprite createButtonWithName:@"Button2" spriteFrameArray:@[CC_SPRITEFRAME(@"Button_Normal.png"), CC_SPRITEFRAME(@"Button_Selected.png"), CC_SPRITEFRAME(@"Button_Disabled.png")] zOrder:1];
+    FGUIButton *button2 = [sprite createButtonWithName:@"Button2" spriteFrameArray:@[CC_SPRITEFRAME(@"Button_Normal.png"), CC_SPRITEFRAME(@"Button_Selected.png"), CC_SPRITEFRAME(@"Button_Disabled.png")]];
     button2.anchorPoint = ccp(0.5f, 0.5f);
     button2.position = ccp(250, 50);
     button2.isEnabled = NO;

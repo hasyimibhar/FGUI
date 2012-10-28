@@ -304,6 +304,12 @@ void SortChildrenZOrder(id<NSObject> object)
     }
 }
 
+- (FGUINode *)createNodeWithName:(NSString *)aName
+{
+    NSInteger lastZ = [[childArray lastObject] zOrder];
+    return [self createNodeWithName:aName zOrder:lastZ + 1];
+}
+
 - (FGUINode *)createNodeWithName:(NSString *)aName zOrder:(NSInteger)aZOrder
 {
     FGUINode *node = [FGUINode elementWithRoot:root andName:aName andParent:self];
@@ -311,11 +317,23 @@ void SortChildrenZOrder(id<NSObject> object)
     return node;
 }
 
+- (FGUILayer *)createLayerWithName:(NSString *)aName
+{
+    NSInteger lastZ = [[childArray lastObject] zOrder];
+    return [self createLayerWithName:aName zOrder:lastZ + 1];
+}
+
 - (FGUILayer *)createLayerWithName:(NSString *)aName zOrder:(NSInteger)aZOrder
 {
     FGUILayer *layer = [FGUILayer elementWithRoot:root andName:aName andParent:self];
     [self _addElement:layer withName:aName zOrder:aZOrder];
     return layer;
+}
+
+- (void)addLayer:(FGUILayer *)aLayer withName:(NSString *)aName
+{
+    NSInteger lastZ = [[childArray lastObject] zOrder];
+    [self addLayer:aLayer withName:aName zOrder:lastZ + 1];
 }
 
 - (void)addLayer:(FGUILayer *)aLayer withName:(NSString *)aName zOrder:(NSInteger)aZOrder
@@ -333,11 +351,23 @@ void SortChildrenZOrder(id<NSObject> object)
     [aLayer setup];
 }
 
+- (FGUIButton *)createButtonWithName:(NSString *)aName spriteFrameArray:(NSArray *)aSpriteFrameArray
+{
+    NSInteger lastZ = [[childArray lastObject] zOrder];
+    return [self createButtonWithName:aName spriteFrameArray:aSpriteFrameArray zOrder:lastZ + 1];
+}
+
 - (FGUIButton *)createButtonWithName:(NSString *)aName spriteFrameArray:(NSArray *)aSpriteFrameArray zOrder:(NSInteger)aZOrder
 {
     FGUIButton *button = [FGUIButton buttonWithRoot:root andName:aName andParent:self andSpriteFrameArray:aSpriteFrameArray];
     [self _addElement:button withName:aName zOrder:aZOrder];
     return button;
+}
+
+- (FGUISprite *)createSpriteWithName:(NSString *)aName spriteFrame:(CCSpriteFrame *)aSpriteFrame
+{
+    NSInteger lastZ = [[childArray lastObject] zOrder];
+    return [self createSpriteWithName:aName spriteFrame:aSpriteFrame zOrder:lastZ + 1];
 }
 
 - (FGUISprite *)createSpriteWithName:(NSString *)aName spriteFrame:(CCSpriteFrame *)aSpriteFrame zOrder:(NSInteger)aZOrder
@@ -347,9 +377,21 @@ void SortChildrenZOrder(id<NSObject> object)
     return sprite;
 }
 
+- (FGUILabel *)createLabelWithName:(NSString *)aName string:(NSString *)aString fontFile:(NSString *)aFontFile
+{
+    NSInteger lastZ = [[childArray lastObject] zOrder];
+    return [self createLabelWithName:aName string:aString fontFile:aFontFile zOrder:lastZ + 1];
+}
+
 - (FGUILabel *)createLabelWithName:(NSString *)aName string:(NSString *)aString fontFile:(NSString *)aFontFile zOrder:(NSInteger)aZOrder
 {
     return [self createLabelWithName:aName string:aString fontFile:aFontFile width:kCCLabelAutomaticWidth alignment:kCCTextAlignmentCenter zOrder:aZOrder];
+}
+
+- (FGUILabel *)createLabelWithName:(NSString *)aName string:(NSString *)aString fontFile:(NSString *)aFontFile width:(float)aWidth alignment:(CCTextAlignment)aAlignment
+{
+    NSInteger lastZ = [[childArray lastObject] zOrder];
+    return [self createLabelWithName:aName string:aString fontFile:aFontFile width:aWidth alignment:aAlignment zOrder:lastZ + 1];
 }
 
 - (FGUILabel *)createLabelWithName:(NSString *)aName string:(NSString *)aString fontFile:(NSString *)aFontFile width:(float)aWidth alignment:(CCTextAlignment)aAlignment zOrder:(NSInteger)aZOrder
@@ -565,12 +607,24 @@ void SortChildrenZOrder(id<NSObject> object)
     [super onExit];
 }
 
+- (FGUILayer *)createLayerWithName:(NSString *)aName
+{
+    NSInteger lastZ = [[layerArray lastObject] zOrder];
+    return [self createLayerWithName:aName zOrder:lastZ + 1];
+}
+
 - (FGUILayer *)createLayerWithName:(NSString *)aName zOrder:(NSInteger)aZOrder
 {
     FGUILayer *layer = [FGUILayer elementWithRoot:self andName:aName andParent:nil];
     [self _addElement:layer withName:aName zOrder:aZOrder];
     
     return layer;
+}
+
+- (void)addLayer:(FGUILayer *)aLayer withName:(NSString *)aName
+{
+    NSInteger lastZ = [[layerArray lastObject] zOrder];
+    return [self addLayer:aLayer withName:aName zOrder:lastZ + 1];
 }
 
 - (void)addLayer:(FGUILayer *)aLayer withName:(NSString *)aName zOrder:(NSInteger)aZOrder
