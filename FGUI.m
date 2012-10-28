@@ -644,10 +644,6 @@
 
 @implementation FGUINode
 
-- (BOOL)touchBegan:(CGPoint)localPosition
-{
-    return NO;
-}
 
 @end
 
@@ -892,11 +888,6 @@
     sprite.scaleY = scale.y;
 }
 
-- (BOOL)touchBegan:(CGPoint)localPosition
-{
-    return NO;
-}
-
 @end
 
 @implementation FGUILabel
@@ -954,11 +945,6 @@
     CGPoint scale = [self worldScale];
     label.scaleX = scale.x;
     label.scaleY = scale.y;
-}
-
-- (BOOL)touchBegan:(CGPoint)localPosition
-{
-    return NO;
 }
 
 @end

@@ -45,7 +45,6 @@
         
         MyCustomLayer *layer2 = [MyCustomLayer node];
         [guiRoot addLayer:layer2 withName:@"MyLayer" zOrder:20];
-        layer2.position = ccp(300, 300);
 	}
 	
 	return self;
