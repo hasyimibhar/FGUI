@@ -27,6 +27,7 @@
         // Disable anti-aliasing, because I'm using pixel font
         [[guiRoot.batchNode texture] setAliasTexParameters];
         [self addChild:guiRoot];
+        guiRoot.position = ccp(200, 0);
         
         FGUILayer *layer1 = [guiRoot createLayerWithName:@"Layer1" zOrder:0];
         

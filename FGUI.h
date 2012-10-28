@@ -13,9 +13,7 @@
 - (BOOL)containsValue:(id<NSObject>)value;
 @end
 
-#define FGUI_DEBUG      (0)
-
-#if FGUI_DEBUG
+#ifdef FGUI_DEBUG
 
 // For debugging purpose
 

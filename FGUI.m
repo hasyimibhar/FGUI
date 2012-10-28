@@ -26,7 +26,7 @@
 
 @end
 
-#if FGUI_DEBUG
+#ifdef FGUI_DEBUG
 
 @implementation FGUIBoundingBoxNode
 
@@ -70,6 +70,8 @@
 - (void)_touchEnded:(CGPoint)localPosition;
 - (BOOL)_isInside:(CGPoint)position;
 - (void)_update;
+
+- (CGAffineTransform)_worldTranform;
 
 @property (readwrite, assign, nonatomic) FGUIElement * fguiParent;
 
@@ -169,7 +171,7 @@
 {
     [super onEnter];
     
-#if FGUI_DEBUG
+#ifdef FGUI_DEBUG
     FGUIBoundingBoxNode *box = [FGUIBoundingBoxNode node];
     [self addChild:box z:FGUI_BBNODE_Z tag:FGUI_BBNODE_TAG];
 #endif
@@ -177,7 +179,7 @@
 
 - (void)onExit
 {
-#if FGUI_DEBUG
+#ifdef FGUI_DEBUG
     [self removeChildByTag:FGUI_BBNODE_TAG cleanup:YES];
 #endif
     
@@ -422,9 +424,19 @@
     
 }
 
+- (CGAffineTransform)_worldTranform
+{
+    CGAffineTransform t = [self nodeToParentTransform];
+    
+	for (FGUIElement *p = self.fguiParent; p != nil; p = p.fguiParent)
+		t = CGAffineTransformConcat(t, [p nodeToParentTransform]);
+    
+	return t;
+}
+
 - (CGPoint)worldPosition
 {
-    return [self.parent convertToWorldSpace:self.position];
+    return CGPointApplyAffineTransform(self.position, [self.fguiParent _worldTranform]);
 }
 
 - (float)worldRotation
