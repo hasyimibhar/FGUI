@@ -64,6 +64,7 @@ typedef void(^VoidBlock)(void);
 - (void)destroySprite:(FGUISprite *)aSprite;
 
 - (FGUILabel *)createLabelWithName:(NSString *)aName string:(NSString *)aString fontFile:(NSString *)aFontFile zOrder:(int)zOrder;
+- (FGUILabel *)createLabelWithName:(NSString *)aName string:(NSString *)aString fontFile:(NSString *)aFontFile width:(float)aWidth alignment:(CCTextAlignment)aAlignment zOrder:(int)zOrder;
 - (void)destroyLabel:(FGUILabel *)aLabel;
 
 - (BOOL)touchBegan:(CGPoint)localPosition;
@@ -150,5 +151,7 @@ typedef void(^VoidBlock)(void);
 @interface FGUILabel : FGUIElement
 
 @property (readwrite, copy, nonatomic) NSString * string;
+@property (readwrite, nonatomic) float width;
+@property (readwrite, nonatomic) CCTextAlignment alignment;
 
 @end

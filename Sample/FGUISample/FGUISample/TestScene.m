@@ -37,7 +37,7 @@
         titleLabel.position = ccp(winSize.width / 2, winSize.height - 50);
         titleLabel.scale = 2.0f;
 
-        FGUILabel *subtitleLabel = [layer1 createLabelWithName:@"Subtitle" string:@"Damn, it works! Thank you, mikezang!" fontFile:@"BodyFont.fnt" zOrder:10];
+        FGUILabel *subtitleLabel = [layer1 createLabelWithName:@"Subtitle" string:@"Damn, it works! Thank you, mikezang!" fontFile:@"BodyFont.fnt"  width:90.0f alignment:kCCTextAlignmentLeft zOrder:10];
         subtitleLabel.position = ccp(winSize.width / 2, winSize.height - 70);
         
         subtitleLabel.scale = 2.0f;

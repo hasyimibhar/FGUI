@@ -66,15 +66,31 @@
     
 	// string to render
 	NSString *string_;
+    // initial string without line breaks
+    NSString *initialString_;
+    // max width until a line break is added
+    float width_;
+    // alignment of all lines
+    CCTextAlignment alignment_;
 }
 
 +(void) purgeCachedData;
 
+/** alignment used for the label */
+@property (nonatomic,assign,readwrite) CCTextAlignment alignment;
+@property (nonatomic,assign,readwrite) float width;
+
 /** creates a BMFont label with an initial string and the FNT file */
 +(id) labelWithString:(NSString*)string fntFile:(NSString*)fntFile;
 
+/** creates a BMFont label with an initial string, the FNT file, width, and alignment option */
++(id) labelWithString:(NSString*)string fntFile:(NSString*)fntFile width:(float)width alignment:(CCTextAlignment)alignment;
+
 /** init a BMFont label with an initial string and the FNT file */
 -(id) initWithString:(NSString*)string fntFile:(NSString*)fntFile;
+
+/** init a BNFont label with an initial string and the FNT file, width, and alignment option*/
+-(id) initWithString:(NSString*)string fntFile:(NSString*)fntFile width:(float)width alignment:(CCTextAlignment)alignment;
 
 /** updates the font chars based on the string to render */
 -(void) createFontChars;

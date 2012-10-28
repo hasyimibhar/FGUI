@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		1C2BCF0F163D11A50007260E /* CCLabelBNFont.m in Sources */ = {isa = PBXBuildFile; fileRef = 1C2BCF0E163D11A50007260E /* CCLabelBNFont.m */; };
 		1CDF050E1637969F00F3FCA1 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1CDF050D1637969F00F3FCA1 /* QuartzCore.framework */; };
 		1CDF05101637969F00F3FCA1 /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1CDF050F1637969F00F3FCA1 /* OpenGLES.framework */; };
 		1CDF05121637969F00F3FCA1 /* OpenAL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1CDF05111637969F00F3FCA1 /* OpenAL.framework */; };
@@ -135,7 +136,6 @@
 		1CDF06AA163796E300F3FCA1 /* FGUI.m in Sources */ = {isa = PBXBuildFile; fileRef = 1CDF06A9163796E300F3FCA1 /* FGUI.m */; };
 		1CDF06B116379C6000F3FCA1 /* Spritesheet.plist in Resources */ = {isa = PBXBuildFile; fileRef = 1CDF06AF16379C6000F3FCA1 /* Spritesheet.plist */; };
 		1CDF06B216379C6000F3FCA1 /* Spritesheet.png in Resources */ = {isa = PBXBuildFile; fileRef = 1CDF06B016379C6000F3FCA1 /* Spritesheet.png */; };
-		1CDF08711637C49700F3FCA1 /* CCLabelBNFont.m in Sources */ = {isa = PBXBuildFile; fileRef = 1CDF08701637C49700F3FCA1 /* CCLabelBNFont.m */; };
 		1CDF08741637C7A800F3FCA1 /* BodyFont.fnt in Resources */ = {isa = PBXBuildFile; fileRef = 1CDF08721637C7A800F3FCA1 /* BodyFont.fnt */; };
 		1CDF08751637C7A800F3FCA1 /* HeadingFont.fnt in Resources */ = {isa = PBXBuildFile; fileRef = 1CDF08731637C7A800F3FCA1 /* HeadingFont.fnt */; };
 		1CDF087D1637D3DD00F3FCA1 /* Default-568h@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 1CDF087C1637D3DD00F3FCA1 /* Default-568h@2x.png */; };
@@ -143,6 +143,8 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		1C2BCF0D163D11A50007260E /* CCLabelBNFont.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CCLabelBNFont.h; path = ../../../CCLabelBNFont.h; sourceTree = "<group>"; };
+		1C2BCF0E163D11A50007260E /* CCLabelBNFont.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = CCLabelBNFont.m; path = ../../../CCLabelBNFont.m; sourceTree = "<group>"; };
 		1CDF05091637969F00F3FCA1 /* FGUISample.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = FGUISample.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		1CDF050D1637969F00F3FCA1 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
 		1CDF050F1637969F00F3FCA1 /* OpenGLES.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGLES.framework; path = System/Library/Frameworks/OpenGLES.framework; sourceTree = SDKROOT; };
@@ -407,8 +409,6 @@
 		1CDF06A9163796E300F3FCA1 /* FGUI.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = FGUI.m; path = ../../../FGUI.m; sourceTree = "<group>"; };
 		1CDF06AF16379C6000F3FCA1 /* Spritesheet.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Spritesheet.plist; path = Resources/Spritesheet.plist; sourceTree = "<group>"; };
 		1CDF06B016379C6000F3FCA1 /* Spritesheet.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = Spritesheet.png; path = Resources/Spritesheet.png; sourceTree = "<group>"; };
-		1CDF086F1637C49700F3FCA1 /* CCLabelBNFont.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CCLabelBNFont.h; path = libs/CCLabelBNFont.h; sourceTree = "<group>"; };
-		1CDF08701637C49700F3FCA1 /* CCLabelBNFont.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = CCLabelBNFont.m; path = libs/CCLabelBNFont.m; sourceTree = "<group>"; };
 		1CDF08721637C7A800F3FCA1 /* BodyFont.fnt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = BodyFont.fnt; path = Resources/BodyFont.fnt; sourceTree = "<group>"; };
 		1CDF08731637C7A800F3FCA1 /* HeadingFont.fnt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = HeadingFont.fnt; path = Resources/HeadingFont.fnt; sourceTree = "<group>"; };
 		1CDF087C1637D3DD00F3FCA1 /* Default-568h@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "Default-568h@2x.png"; path = "Resources/Default-568h@2x.png"; sourceTree = "<group>"; };
@@ -521,8 +521,6 @@
 				1CDF053B1637969F00F3FCA1 /* cocos2d */,
 				1CDF0652163796A100F3FCA1 /* CocosDenshion */,
 				1CDF0661163796A200F3FCA1 /* kazmath */,
-				1CDF086F1637C49700F3FCA1 /* CCLabelBNFont.h */,
-				1CDF08701637C49700F3FCA1 /* CCLabelBNFont.m */,
 			);
 			name = libs;
 			sourceTree = "<group>";
@@ -585,6 +583,8 @@
 				1CDF0589163796A000F3FCA1 /* CCLabelAtlas.m */,
 				1CDF058B163796A000F3FCA1 /* CCLabelBMFont.h */,
 				1CDF058C163796A000F3FCA1 /* CCLabelBMFont.m */,
+				1C2BCF0D163D11A50007260E /* CCLabelBNFont.h */,
+				1C2BCF0E163D11A50007260E /* CCLabelBNFont.m */,
 				1CDF058E163796A000F3FCA1 /* CCLabelTTF.h */,
 				1CDF058F163796A000F3FCA1 /* CCLabelTTF.m */,
 				1CDF0591163796A000F3FCA1 /* CCLayer.h */,
@@ -1039,8 +1039,8 @@
 				1CDF0699163796A200F3FCA1 /* AppDelegate.m in Sources */,
 				1CDF06A7163796C500F3FCA1 /* TestScene.m in Sources */,
 				1CDF06AA163796E300F3FCA1 /* FGUI.m in Sources */,
-				1CDF08711637C49700F3FCA1 /* CCLabelBNFont.m in Sources */,
 				1CDF08801637DD3C00F3FCA1 /* MyCustomLayer.m in Sources */,
+				1C2BCF0F163D11A50007260E /* CCLabelBNFont.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1146,6 +1146,7 @@
 				1CDF06A4163796A200F3FCA1 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};

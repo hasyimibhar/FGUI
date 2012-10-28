@@ -341,12 +341,19 @@
 
 - (FGUILabel *)createLabelWithName:(NSString *)aName string:(NSString *)aString fontFile:(NSString *)aFontFile zOrder:(int)zOrder
 {
+    return [self createLabelWithName:aName string:aString fontFile:aFontFile width:kCCLabelAutomaticWidth alignment:kCCTextAlignmentCenter zOrder:zOrder];
+}
+
+- (FGUILabel *)createLabelWithName:(NSString *)aName string:(NSString *)aString fontFile:(NSString *)aFontFile width:(float)aWidth alignment:(CCTextAlignment)aAlignment zOrder:(int)zOrder
+{
     assert(aName);
     assert(zOrder >= 0);
     assert(childTable[aName] == nil);
     
     FGUILabel *label = [FGUILabel labelWithRoot:root andName:aName andParent:self andFile:aFontFile];
     label.string = aString;
+    label.width = aWidth;
+    label.alignment = aAlignment;
     [self addChild:label z:zOrder];
     childTable[aName] = label;
     
@@ -723,7 +730,7 @@
 - (void)onEnter
 {
     [super onEnter];
-    [root.batchNode addChild:sprite];
+    [root.batchNode addChild:sprite z:zOrder_];
 }
 
 - (void)onExit
@@ -841,7 +848,7 @@
 - (void)onEnter
 {
     [super onEnter];
-    [root.batchNode addChild:sprite];
+    [root.batchNode addChild:sprite z:zOrder_];
 }
 
 - (void)onExit
@@ -869,7 +876,7 @@
     return [[[self alloc] initWithRoot:aRoot andName:aName andParent:aParent andFile:aFile] autorelease];
 }
 
-@dynamic string;
+@dynamic string, width, alignment;
 
 - (void)setAnchorPoint:(CGPoint)anchorPoint
 {
@@ -889,11 +896,31 @@
     self.contentSize = label.contentSize;
 }
 
+- (float)width
+{
+    return label.width;
+}
+
+- (void)setWidth:(float)width
+{
+    label.width = width;
+}
+
+- (CCTextAlignment)alignment
+{
+    return label.alignment;
+}
+
+- (void)setAlignment:(CCTextAlignment)alignment
+{
+    label.alignment = alignment;
+}
+
 - (id)initWithRoot:(FGUIRoot *)aRoot andName:(NSString *)aName andParent:(FGUIElement *)aParent andFile:(NSString *)aFile
 {
     if ((self = [super initWithRoot:aRoot andName:aName andParent:aParent]))
 	{
-        label               = [[CCLabelBNFont alloc] initWithString:@"" fntFile:aFile];
+        label               = [[CCLabelBNFont alloc] initWithString:@"" fntFile:aFile width:kCCLabelAutomaticWidth alignment:kCCTextAlignmentCenter];
         assert(label);
         
         self.contentSize    = label.contentSize;
@@ -913,7 +940,7 @@
 - (void)onEnter
 {
     [super onEnter];
-    [root.batchNode addChild:label];
+    [root.batchNode addChild:label z:zOrder_];
 }
 
 - (void)onExit

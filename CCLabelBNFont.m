@@ -39,13 +39,26 @@ typedef struct _KerningHashElement
 	UT_hash_handle	hh;
 } tKerningHashElement;
 
+@interface CCLabelBNFont ()
+
+- (void)setupWithString:(NSString *)theString width:(float)width alignment:(CCTextAlignment)alignment;
+-(int) kerningAmountForFirst:(unichar)first second:(unichar)second;
+-(void) updateLabel;
+-(void) setString:(NSString*) newString updateLabel:(BOOL)update;
+
+@end
+
 #pragma mark -
 #pragma mark CCLabelBNFont
 @implementation CCLabelBNFont
 
+@synthesize alignment = alignment_;
+@synthesize width = width_;
+
 #pragma mark -
 #pragma mark LabelBNFont - Purge Cache
-+(void) purgeCachedData {
++(void) purgeCachedData
+{
 	FNTConfigRemoveCache();
 }
 
@@ -145,8 +158,18 @@ typedef struct _FontDefHashElement
 	return [[[self alloc] initWithString:string fntFile:fntFile] autorelease];
 }
 
++(id) labelWithString:(NSString*)string fntFile:(NSString*)fntFile width:(float)width alignment:(CCTextAlignment)alignment
+{
+    return [[[self alloc] initWithString:string fntFile:fntFile width:width alignment:alignment imageOffset:CGPointZero] autorelease];
+}
+
 -(id) initWithString:(NSString*)theString fntFile:(NSString*)fntFile {
     
+	return [self initWithString:theString fntFile:fntFile width:kCCLabelAutomaticWidth alignment:kCCTextAlignmentLeft];
+}
+
+-(id) initWithString:(NSString*)theString fntFile:(NSString*)fntFile width:(float)width alignment:(CCTextAlignment)alignment
+{
 	[configuration_ release]; // allow re-init
 	configuration_ = FNTConfigLoadFile(fntFile);
 	[configuration_ retain];
@@ -159,11 +182,11 @@ typedef struct _FontDefHashElement
     
     if (frame) {
         if ((self = [super initWithSpriteFrame:frame])) {
-            [self setString:theString];
+            [self setupWithString:theString width:width alignment:alignment];
         }
     }
 	else if ((self = [super initWithFile:configuration_.atlasName])) {
-    	[self setString:theString];
+    	[self setupWithString:theString width:width alignment:alignment];
     }
     
 	return self;
@@ -173,6 +196,162 @@ typedef struct _FontDefHashElement
 	[string_ release];
 	[configuration_ release];
 	[super dealloc];
+}
+
+- (void)setupWithString:(NSString *)theString width:(float)width alignment:(CCTextAlignment)alignment
+{
+    width_ = width;
+    alignment_ = alignment;
+    opacity_ = 255;
+    color_ = ccWHITE;
+    
+    contentSize_ = CGSizeZero;
+    
+    opacityModifyRGB_ = [[textureAtlas_ texture] hasPremultipliedAlpha];
+    anchorPoint_ = ccp(0.5f, 0.5f);
+    
+    [self setString:theString updateLabel:YES];
+}
+
+- (void)updateLabel
+{
+    [self setString:initialString_ updateLabel:NO];
+	
+    if (width_ != kCCLabelAutomaticWidth){
+        //Step 1: Make multiline
+		
+        NSString *multilineString = @"", *lastWord = @"";
+        int line = 1, i = 0;
+        NSUInteger stringLength = [self.string length];
+        float startOfLine = -1, startOfWord = -1;
+        int skip = 0;
+        //Go through each character and insert line breaks as necessary
+        for (int j = 0; j < [children_ count]; j++) {
+            CCSprite *characterSprite;
+			
+            while(!(characterSprite = (CCSprite *)[self getChildByTag:j+skip]))
+                skip++;
+			
+            if (!characterSprite.visible) continue;
+			
+            if (i >= stringLength || i < 0)
+                break;
+			
+            unichar character = [self.string characterAtIndex:i];
+			
+            if (startOfWord == -1)
+                startOfWord = characterSprite.position.x - characterSprite.contentSize.width/2;
+            if (startOfLine == -1)
+                startOfLine = startOfWord;
+			
+            //Character is a line break
+            //Put lastWord on the current line and start a new line
+            //Reset lastWord
+            if ([[NSCharacterSet newlineCharacterSet] characterIsMember:character]) {
+                lastWord = [[lastWord stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]] stringByAppendingFormat:@"%C", character];
+                multilineString = [multilineString stringByAppendingString:lastWord];
+                lastWord = @"";
+                startOfWord = -1;
+                line++;
+                startOfLine = -1;
+                i++;
+				
+                //CCLabelBMFont do not have a character for new lines, so do NOT "continue;" in the for loop. Process the next character
+                if (i >= stringLength || i < 0)
+                    break;
+                character = [self.string characterAtIndex:i];
+				
+                if (startOfWord == -1)
+                    startOfWord = characterSprite.position.x - characterSprite.contentSize.width/2;
+                if (startOfLine == -1)
+                    startOfLine = startOfWord;
+            }
+			
+            //Character is a whitespace
+            //Put lastWord on current line and continue on current line
+            //Reset lastWord
+            if ([[NSCharacterSet whitespaceCharacterSet] characterIsMember:character]) {
+                lastWord = [lastWord stringByAppendingFormat:@"%C", character];
+                multilineString = [multilineString stringByAppendingString:lastWord];
+                lastWord = @"";
+                startOfWord = -1;
+                i++;
+                continue;
+            }
+			
+            //Character is out of bounds
+            //Do not put lastWord on current line. Add "\n" to current line to start a new line
+            //Append to lastWord
+            if (characterSprite.position.x + characterSprite.contentSize.width/2 - startOfLine >  width_) {
+                lastWord = [lastWord stringByAppendingFormat:@"%C", character];
+                NSString *trimmedString = [multilineString stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]];
+                multilineString = [trimmedString stringByAppendingString:@"\n"];
+                line++;
+                startOfLine = -1;
+                i++;
+                continue;
+            } else {
+                //Character is normal
+                //Append to lastWord
+                lastWord = [lastWord stringByAppendingFormat:@"%C", character];
+                i++;
+                continue;
+            }
+        }
+		
+        multilineString = [multilineString stringByAppendingFormat:@"%@", lastWord];
+		
+        [self setString:multilineString updateLabel:NO];
+    }
+	
+    //Step 2: Make alignment
+	
+    if (self.alignment != kCCTextAlignmentLeft) {
+		
+        int i = 0;
+        //Number of spaces skipped
+        int lineNumber = 0;
+        //Go through line by line
+        for (NSString *lineString in [string_ componentsSeparatedByCharactersInSet:[NSCharacterSet newlineCharacterSet]]) {
+            int lineWidth = 0;
+			
+            //Find index of last character in this line
+            NSInteger index = i + [lineString length] - 1 + lineNumber;
+            if (index < 0)
+                continue;
+			
+            //Find position of last character on the line
+            CCSprite *lastChar = (CCSprite *)[self getChildByTag:index];
+			
+            lineWidth = lastChar.position.x + lastChar.contentSize.width/2;
+			
+            //Figure out how much to shift each character in this line horizontally
+            float shift = 0;
+            switch (self.alignment) {
+                case kCCTextAlignmentCenter:
+                    shift = self.contentSize.width/2 - lineWidth/2;
+                    break;
+                case kCCTextAlignmentRight:
+                    shift = self.contentSize.width - lineWidth;
+                default:
+                    break;
+            }
+			
+            if (shift != 0) {
+                int j = 0;
+                //For each character, shift it so that the line is center aligned
+                for (j = 0; j < [lineString length]; j++) {
+                    index = i + j + lineNumber;
+                    if (index < 0)
+                        continue;
+                    CCSprite *characterSprite = (CCSprite *)[self getChildByTag:index];
+                    characterSprite.position = ccpAdd(characterSprite.position, ccp(shift, 0));
+                }
+            }
+            i += [lineString length];
+            lineNumber++;
+        }
+    }
 }
 
 #pragma mark -
@@ -310,16 +489,29 @@ typedef struct _FontDefHashElement
 
 #pragma mark -
 #pragma mark LabelBNFont - CCLabelProtocol protocol
-- (void) setString:(NSString*) newString {
-	[string_ release];
-	string_ = [newString copy];
-    
-	CCNode *child;
-	CCARRAY_FOREACH(children_, child) {
-    	child.visible = NO;
+- (void) setString:(NSString*)newString
+{
+	[self setString:newString updateLabel:YES];
+}
+
+- (void) setString:(NSString*) newString updateLabel:(BOOL)update
+{
+    if( !update ) {
+        [string_ release];
+        string_ = [newString copy];
+    } else {
+        [initialString_ release];
+        initialString_ = [newString copy];
     }
-    
+	
+    CCSprite *child;
+    CCARRAY_FOREACH(children_, child)
+	child.visible = NO;
+	
 	[self createFontChars];
+	
+    if (update)
+        [self updateLabel];
 }
 
 -(NSString*) string {
@@ -348,6 +540,17 @@ typedef struct _FontDefHashElement
 	CCARRAY_FOREACH(children_, child) {
     	[child setColor:color3];
     }
+}
+
+#pragma mark LabelBMFont - Alignment
+- (void)setWidth:(float)width {
+    width_ = width;
+    [self updateLabel];
+}
+
+- (void)setAlignment:(CCTextAlignment)alignment {
+    alignment_ = alignment;
+    [self updateLabel];
 }
 
 @end
