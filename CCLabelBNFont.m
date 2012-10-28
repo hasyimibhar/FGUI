@@ -178,8 +178,6 @@ typedef struct _FontDefHashElement
     
 	CCSpriteFrame *frame = [[CCSpriteFrameCache sharedSpriteFrameCache] spriteFrameByName:configuration_.atlasName];
     
-    CCLOG(@"Frame: %@",frame);
-    
     if (frame) {
         if ((self = [super initWithSpriteFrame:frame])) {
             [self setupWithString:theString width:width alignment:alignment];
