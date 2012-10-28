@@ -55,6 +55,7 @@ typedef void(^VoidBlock)(void);
 - (void)destroyNode:(FGUINode *)aNode;
 
 - (FGUILayer *)createLayerWithName:(NSString *)aName zOrder:(int)zOrder;
+- (void)addLayer:(FGUILayer *)aLayer withName:(NSString *)aName zOrder:(int)zOrder;
 - (void)destroyLayer:(FGUILayer *)aLayer;
 
 - (FGUIButton *)createButtonWithName:(NSString *)aName spriteFrameArray:(NSArray *)aSpriteFrameArray zOrder:(int)zOrder;
@@ -145,6 +146,8 @@ typedef void(^VoidBlock)(void);
 }
 
 @property (readwrite, assign, nonatomic) CCSpriteFrame * spriteFrame;
+@property (readwrite, nonatomic) ccColor3B color;
+@property (readwrite, nonatomic) GLubyte opacity;
 
 @end
 

@@ -280,6 +280,22 @@
     return layer;
 }
 
+- (void)addLayer:(FGUILayer *)aLayer withName:(NSString *)aName zOrder:(int)zOrder
+{
+    assert(aLayer);
+    assert(aLayer.fguiParent == nil);
+    assert(![childTable containsValue:aLayer]);
+    assert(aName);
+    assert(zOrder >= 0);
+    assert(childTable[aName] == nil);
+    
+    [aLayer _setRoot:root];
+    [aLayer _setName:aName];
+    [self addChild:aLayer z:zOrder];
+    childTable[aName] = aLayer;
+    [aLayer setup];
+}
+
 - (void)destroyLayer:(FGUILayer *)aLayer
 {
     assert(childTable[aLayer.name]);
@@ -463,7 +479,7 @@
         CGPoint parentScale = [fguiParent worldScale];
         worldScale = ccp(worldScale.x * parentScale.x, worldScale.y * parentScale.y);
     }
-
+    
     return worldScale;
 }
 
@@ -811,6 +827,7 @@
 }
 
 @synthesize spriteFrame;
+@dynamic color, opacity;
 
 - (void)setSpriteFrame:(CCSpriteFrame *)aSpriteFrame
 {
@@ -824,6 +841,26 @@
 {
     [super setAnchorPoint:anchorPoint];
     sprite.anchorPoint = anchorPoint;
+}
+
+- (ccColor3B)color
+{
+    return sprite.color;
+}
+
+- (void)setColor:(ccColor3B)color
+{
+    sprite.color = color;
+}
+
+- (GLubyte)opacity
+{
+    return sprite.opacity;
+}
+
+- (void)setOpacity:(GLubyte)opacity
+{
+    sprite.opacity = opacity;
 }
 
 - (id)initWithRoot:(FGUIRoot *)aRoot andName:(NSString *)aName andParent:(FGUIElement *)aParent andSpriteFrame:(CCSpriteFrame *)aSpriteFrame
