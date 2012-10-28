@@ -47,26 +47,24 @@ typedef void(^VoidBlock)(void);
     FGUIRoot    *root;
     FGUIElement *fguiParent;
     NSString    *name;
+    NSUInteger  fguiZOrder;
     
     NSMutableDictionary *childTable;
+    NSMutableArray *childArray;
 }
 
-- (FGUINode *)createNodeWithName:(NSString *)aName zOrder:(int)zOrder;
-- (void)destroyNode:(FGUINode *)aNode;
+- (FGUINode *)createNodeWithName:(NSString *)aName zOrder:(NSInteger)zOrder;
+- (FGUILayer *)createLayerWithName:(NSString *)aName zOrder:(NSInteger)zOrder;
+- (void)addLayer:(FGUILayer *)aLayer withName:(NSString *)aName zOrder:(NSInteger)aZOrder;
 
-- (FGUILayer *)createLayerWithName:(NSString *)aName zOrder:(int)zOrder;
-- (void)addLayer:(FGUILayer *)aLayer withName:(NSString *)aName zOrder:(int)zOrder;
-- (void)destroyLayer:(FGUILayer *)aLayer;
+- (FGUIButton *)createButtonWithName:(NSString *)aName spriteFrameArray:(NSArray *)aSpriteFrameArray zOrder:(NSInteger)aZOrder;
 
-- (FGUIButton *)createButtonWithName:(NSString *)aName spriteFrameArray:(NSArray *)aSpriteFrameArray zOrder:(int)zOrder;
-- (void)destroyButton:(FGUIButton *)aButton;
+- (FGUISprite *)createSpriteWithName:(NSString *)aName spriteFrame:(CCSpriteFrame *)aSpriteFrame zOrder:(NSInteger)aZOrder;
 
-- (FGUISprite *)createSpriteWithName:(NSString *)aName spriteFrame:(CCSpriteFrame *)aSpriteFrame zOrder:(int)zOrder;
-- (void)destroySprite:(FGUISprite *)aSprite;
+- (FGUILabel *)createLabelWithName:(NSString *)aName string:(NSString *)aString fontFile:(NSString *)aFontFile zOrder:(NSInteger)aZOrder;
+- (FGUILabel *)createLabelWithName:(NSString *)aName string:(NSString *)aString fontFile:(NSString *)aFontFile width:(float)aWidth alignment:(CCTextAlignment)aAlignment zOrder:(NSInteger)aZOrder;
 
-- (FGUILabel *)createLabelWithName:(NSString *)aName string:(NSString *)aString fontFile:(NSString *)aFontFile zOrder:(int)zOrder;
-- (FGUILabel *)createLabelWithName:(NSString *)aName string:(NSString *)aString fontFile:(NSString *)aFontFile width:(float)aWidth alignment:(CCTextAlignment)aAlignment zOrder:(int)zOrder;
-- (void)destroyLabel:(FGUILabel *)aLabel;
+- (void)destroyElement:(FGUIElement *)aElement;
 
 - (BOOL)touchBegan:(CGPoint)localPosition;
 - (void)touchMoved:(CGPoint)localPosition;
@@ -77,6 +75,7 @@ typedef void(^VoidBlock)(void);
 - (CGPoint)worldScale;
 
 @property (readonly, assign, nonatomic) NSString * name;
+@property (readonly, assign, nonatomic) FGUIElement * fguiParent;
 @property (readwrite, assign, nonatomic) id<FGUIElementDelegate> delegate;
 
 @end
@@ -85,6 +84,7 @@ typedef void(^VoidBlock)(void);
 {
     CCSpriteBatchNode *batchNode;
     NSMutableDictionary *layerTable;
+    NSMutableArray *layerArray;
 }
 
 + (id)guiWithFile:(NSString *)aFile;

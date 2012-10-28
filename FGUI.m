@@ -26,6 +26,30 @@
 
 @end
 
+void SortChildrenZOrder(id<NSObject> object)
+{
+    assert(object);
+    assert([object isMemberOfClass:FGUIRoot.class] || [object isKindOfClass:FGUIElement.class]);
+    
+    NSMutableArray *childArray = [object performSelector:@selector(childArray)];
+    [childArray sortUsingComparator:^NSComparisonResult(id obj1, id obj2)
+     {
+         FGUIElement *e1 = (FGUIElement *)obj1;
+         FGUIElement *e2 = (FGUIElement *)obj2;
+         
+         if (e1.zOrder < e2.zOrder)
+         {
+             return NSOrderedAscending;
+         }
+         else if (e1.zOrder > e2.zOrder)
+         {
+             return NSOrderedDescending;
+         }
+         
+         return NSOrderedSame;
+     }];
+}
+
 #ifdef FGUI_DEBUG
 
 @implementation FGUIBoundingBoxNode
@@ -59,33 +83,48 @@
 @interface FGUIElement ()
 {
     FGUIElement *activeChild;
+    
+@public
+    BOOL        isArrayDirty;
 }
 
 + (id)elementWithRoot:(FGUIRoot *)aRoot andName:(NSString *)aName andParent:(FGUIElement *)aParent;
 
 - (id)initWithRoot:(FGUIRoot *)aRoot andName:(NSString *)aName andParent:(FGUIElement *)aParent;
 
+- (void)_addElement:(FGUIElement *)aElement withName:(NSString *)aName zOrder:(NSInteger)aZOrder;
+
 - (BOOL)_touchBegan:(CGPoint)localPosition;
 - (void)_touchMoved:(CGPoint)localPosition;
 - (void)_touchEnded:(CGPoint)localPosition;
 - (BOOL)_isInside:(CGPoint)position;
 - (void)_update;
+- (NSInteger)_updateChildrenZOrder:(NSInteger)z;
+- (NSInteger)_updateZOrder:(NSInteger)z;
 
 - (CGAffineTransform)_worldTranform;
 
-@property (readwrite, assign, nonatomic) FGUIElement * fguiParent;
+@property (readonly, assign, nonatomic) NSMutableArray * childArray;
 
 @end
 
 @interface FGUILayer ()
 - (void)_setName:(NSString *)aName;
 - (void)_setRoot:(FGUIRoot *)aRoot;
+- (void)_setParent:(FGUIElement *)aParent;
 @end
 
 @interface FGUIRoot ()
 {
-    FGUILayer *activeLayer;
+    FGUILayer   *activeLayer;
+    
+@public
+    BOOL        isArrayDirty;
 }
+
+- (void)_addElement:(FGUIElement *)aElement withName:(NSString *)aName zOrder:(NSInteger)aZOrder;
+
+@property (readonly, assign, nonatomic) NSMutableArray * childArray;
 
 @end
 
@@ -130,6 +169,27 @@
 }
 
 @synthesize name, delegate, fguiParent;
+@synthesize childArray = childArray;
+
+- (NSInteger)zOrder
+{
+    return fguiZOrder;
+}
+
+- (void)setZOrder:(NSInteger)aZOrder
+{
+    if (aZOrder != fguiZOrder)
+    {
+        fguiZOrder = aZOrder;
+        
+        if (fguiParent)
+        {
+            fguiParent->isArrayDirty = YES;
+        }
+    
+        root->isArrayDirty = YES;
+    }
+}
 
 - (id)init
 {
@@ -138,8 +198,10 @@
         root        = nil;
         name        = nil;
         fguiParent  = nil;
+        fguiZOrder  = 0;
         
         childTable  = [[NSMutableDictionary alloc] init];
+        childArray  = [[NSMutableArray alloc] init];
         activeChild = nil;
 	}
 	
@@ -162,6 +224,7 @@
 
 - (void)dealloc
 {
+    [childArray release];
     [childTable release];
     [name release];
 	[super dealloc];
@@ -241,150 +304,88 @@
     }
 }
 
-- (FGUINode *)createNodeWithName:(NSString *)aName zOrder:(int)zOrder
+- (FGUINode *)createNodeWithName:(NSString *)aName zOrder:(NSInteger)aZOrder
 {
-    assert(aName);
-    assert(zOrder >= 0);
-    assert(childTable[aName] == nil);
-    
     FGUINode *node = [FGUINode elementWithRoot:root andName:aName andParent:self];
-    [self addChild:node z:zOrder];
-    childTable[aName] = node;
-    node.fguiParent = self;
-    
+    [self _addElement:node withName:aName zOrder:aZOrder];
     return node;
 }
 
-- (void)destroyNode:(FGUINode *)aNode
+- (FGUILayer *)createLayerWithName:(NSString *)aName zOrder:(NSInteger)aZOrder
 {
-    assert(childTable[aNode.name]);
-    assert(childTable[aNode.name] == aNode);
-    assert([aNode isKindOfClass:FGUINode.class]);
-    assert([self.children containsObject:aNode]);
-    
-    [aNode removeFromParentAndCleanup:YES];
-    [childTable removeObjectForKey:aNode.name];
-}
-
-
-- (FGUILayer *)createLayerWithName:(NSString *)aName zOrder:(int)zOrder
-{
-    assert(aName);
-    assert(zOrder >= 0);
-    assert(childTable[aName] == nil);
-    
     FGUILayer *layer = [FGUILayer elementWithRoot:root andName:aName andParent:self];
-    [self addChild:layer z:zOrder];
-    childTable[aName] = layer;
-    
+    [self _addElement:layer withName:aName zOrder:aZOrder];
     return layer;
 }
 
-- (void)addLayer:(FGUILayer *)aLayer withName:(NSString *)aName zOrder:(int)zOrder
+- (void)addLayer:(FGUILayer *)aLayer withName:(NSString *)aName zOrder:(NSInteger)aZOrder
 {
     assert(aLayer);
     assert(aLayer.fguiParent == nil);
+    assert(![childArray containsObject:aLayer]);
     assert(![childTable containsValue:aLayer]);
-    assert(aName);
-    assert(zOrder >= 0);
-    assert(childTable[aName] == nil);
     
     [aLayer _setRoot:root];
     [aLayer _setName:aName];
-    [self addChild:aLayer z:zOrder];
-    childTable[aName] = aLayer;
+    [aLayer _setParent:self];
+    [self _addElement:aLayer withName:aName zOrder:aZOrder];
+    
     [aLayer setup];
 }
 
-- (void)destroyLayer:(FGUILayer *)aLayer
+- (FGUIButton *)createButtonWithName:(NSString *)aName spriteFrameArray:(NSArray *)aSpriteFrameArray zOrder:(NSInteger)aZOrder
 {
-    assert(childTable[aLayer.name]);
-    assert(childTable[aLayer.name] == aLayer);
-    assert([aLayer isKindOfClass:FGUILayer.class]);
-    assert([self.children containsObject:aLayer]);
-    
-    [aLayer removeFromParentAndCleanup:YES];
-    [childTable removeObjectForKey:aLayer.name];
-}
-
-- (FGUIButton *)createButtonWithName:(NSString *)aName spriteFrameArray:(NSArray *)aSpriteFrameArray zOrder:(int)zOrder
-{
-    assert(aName);
-    assert(zOrder >= 0);
-    assert(childTable[aName] == nil);
-    
     FGUIButton *button = [FGUIButton buttonWithRoot:root andName:aName andParent:self andSpriteFrameArray:aSpriteFrameArray];
-    [self addChild:button z:zOrder];
-    childTable[aName] = button;
-    
+    [self _addElement:button withName:aName zOrder:aZOrder];
     return button;
 }
 
-- (void)destroyButton:(FGUIButton *)aButton
+- (FGUISprite *)createSpriteWithName:(NSString *)aName spriteFrame:(CCSpriteFrame *)aSpriteFrame zOrder:(NSInteger)aZOrder
 {
-    assert(childTable[aButton.name]);
-    assert(childTable[aButton.name] == aButton);
-    assert([aButton isKindOfClass:FGUIButton.class]);
-    assert([self.children containsObject:aButton]);
-    
-    [aButton removeFromParentAndCleanup:YES];
-    [childTable removeObjectForKey:aButton.name];
-}
-
-- (FGUISprite *)createSpriteWithName:(NSString *)aName spriteFrame:(CCSpriteFrame *)aSpriteFrame zOrder:(int)zOrder
-{
-    assert(aName);
-    assert(zOrder >= 0);
-    assert(childTable[aName] == nil);
-    
     FGUISprite *sprite = [FGUISprite spriteWithRoot:root andName:aName andParent:self andSpriteFrame:aSpriteFrame];
-    [self addChild:sprite z:zOrder];
-    childTable[aName] = sprite;
-    
+    [self _addElement:sprite withName:aName zOrder:aZOrder];
     return sprite;
 }
 
-- (void)destroySprite:(FGUISprite *)aSprite
+- (FGUILabel *)createLabelWithName:(NSString *)aName string:(NSString *)aString fontFile:(NSString *)aFontFile zOrder:(NSInteger)aZOrder
 {
-    assert(childTable[aSprite.name]);
-    assert(childTable[aSprite.name] == aSprite);
-    assert([aSprite isKindOfClass:FGUISprite.class]);
-    assert([self.children containsObject:aSprite]);
-    
-    [aSprite removeFromParentAndCleanup:YES];
-    [childTable removeObjectForKey:aSprite.name];
+    return [self createLabelWithName:aName string:aString fontFile:aFontFile width:kCCLabelAutomaticWidth alignment:kCCTextAlignmentCenter zOrder:aZOrder];
 }
 
-- (FGUILabel *)createLabelWithName:(NSString *)aName string:(NSString *)aString fontFile:(NSString *)aFontFile zOrder:(int)zOrder
+- (FGUILabel *)createLabelWithName:(NSString *)aName string:(NSString *)aString fontFile:(NSString *)aFontFile width:(float)aWidth alignment:(CCTextAlignment)aAlignment zOrder:(NSInteger)aZOrder
 {
-    return [self createLabelWithName:aName string:aString fontFile:aFontFile width:kCCLabelAutomaticWidth alignment:kCCTextAlignmentCenter zOrder:zOrder];
-}
-
-- (FGUILabel *)createLabelWithName:(NSString *)aName string:(NSString *)aString fontFile:(NSString *)aFontFile width:(float)aWidth alignment:(CCTextAlignment)aAlignment zOrder:(int)zOrder
-{
-    assert(aName);
-    assert(zOrder >= 0);
-    assert(childTable[aName] == nil);
-    
     FGUILabel *label = [FGUILabel labelWithRoot:root andName:aName andParent:self andFile:aFontFile];
     label.string = aString;
     label.width = aWidth;
     label.alignment = aAlignment;
-    [self addChild:label z:zOrder];
-    childTable[aName] = label;
     
+    [self _addElement:label withName:aName zOrder:aZOrder];
     return label;
 }
 
-- (void)destroyLabel:(FGUILabel *)aLabel
+- (void)destroyElement:(FGUIElement *)aElement
 {
-    assert(childTable[aLabel.name]);
-    assert(childTable[aLabel.name] == aLabel);
-    assert([aLabel isKindOfClass:FGUILabel.class]);
-    assert([self.children containsObject:aLabel]);
+    assert(aElement);
+    assert([childArray containsObject:aElement]);
+    assert(childTable[aElement.name]);
+    assert(childTable[aElement.name] == aElement);
+    assert([self.children containsObject:aElement]);
     
-    [aLabel removeFromParentAndCleanup:YES];
-    [childTable removeObjectForKey:aLabel.name];
+    [aElement removeFromParentAndCleanup:YES];
+    [childTable removeObjectForKey:aElement.name];
+    [childArray removeObject:aElement];
+}
+
+- (void)_addElement:(FGUIElement *)aElement withName:(NSString *)aName zOrder:(NSInteger)aZOrder
+{
+    assert(aElement);
+    assert(aName);
+    assert(childTable[aName] == nil);
+    
+    aElement.zOrder = aZOrder;
+    [self addChild:aElement];
+    [childArray addObject:aElement];
+    childTable[aName] = aElement;
 }
 
 - (BOOL)_isInside:(CGPoint)position
@@ -488,11 +489,40 @@
     
 }
 
+- (NSInteger)_updateChildrenZOrder:(NSInteger)z
+{
+    z = [self _updateZOrder:z];
+    
+    for (FGUIElement *aChild in childArray)
+    {
+        z = [aChild _updateChildrenZOrder:z];
+    }
+    
+    return z;
+}
+
+- (NSInteger)_updateZOrder:(NSInteger)z
+{
+    return z;
+}
+
+- (void)visit
+{
+    if (isArrayDirty)
+    {
+        SortChildrenZOrder(self);
+        isArrayDirty = NO;
+    }
+    
+    [super visit];
+}
+
 @end
 
 @implementation FGUIRoot
 
 @synthesize batchNode;
+@synthesize childArray = layerArray;
 
 + (id)guiWithFile:(NSString *)aFile
 {
@@ -509,6 +539,8 @@
         
         activeLayer     = nil;
         layerTable      = [[NSMutableDictionary alloc] init];
+        layerArray      = [[NSMutableArray alloc] init];
+        isArrayDirty    = YES;
 	}
 	
 	return self;
@@ -516,6 +548,7 @@
 
 - (void)dealloc
 {
+    [layerArray release];
     [layerTable release];
 	[super dealloc];
 }
@@ -532,51 +565,57 @@
     [super onExit];
 }
 
-- (FGUILayer *)createLayerWithName:(NSString *)aName zOrder:(int)zOrder
+- (FGUILayer *)createLayerWithName:(NSString *)aName zOrder:(NSInteger)aZOrder
 {
-    assert(aName);
-    assert(zOrder >= 0);
-    assert(layerTable[aName] == nil);
-    
     FGUILayer *layer = [FGUILayer elementWithRoot:self andName:aName andParent:nil];
-    [self addChild:layer z:zOrder];
-    layerTable[aName] = layer;
+    [self _addElement:layer withName:aName zOrder:aZOrder];
     
     return layer;
 }
 
-- (void)addLayer:(FGUILayer *)aLayer withName:(NSString *)aName zOrder:(int)zOrder
+- (void)addLayer:(FGUILayer *)aLayer withName:(NSString *)aName zOrder:(NSInteger)aZOrder
 {
     assert(aLayer);
     assert(aLayer.fguiParent == nil);
+    assert(![layerArray containsObject:aLayer]);
     assert(![layerTable containsValue:aLayer]);
-    assert(aName);
-    assert(zOrder >= 0);
-    assert(layerTable[aName] == nil);
     
     [aLayer _setRoot:self];
     [aLayer _setName:aName];
-    [self addChild:aLayer z:zOrder];
-    layerTable[aName] = aLayer;
+    [self _addElement:aLayer withName:aName zOrder:aZOrder];
+    
     [aLayer setup];
 }
 
 - (void)destroyLayer:(FGUILayer *)aLayer
 {
+    assert(aLayer);
     assert(layerTable[aLayer.name]);
+    assert([layerArray containsObject:aLayer]);
     assert(layerTable[aLayer.name] == aLayer);
     assert([aLayer isKindOfClass:FGUILayer.class]);
     assert([self.children containsObject:aLayer]);
     
     [aLayer removeFromParentAndCleanup:YES];
     [layerTable removeObjectForKey:aLayer.name];
+    [layerArray removeObject:aLayer];
 }
 
 - (void)destroyLayerWithName:(NSString *)aLayerName
 {
-    FGUILayer *layer = layerTable[aLayerName];
-    assert(layer);
-    [self destroyLayer:layer];
+    [self destroyLayer:layerTable[aLayerName]];
+}
+
+- (void)_addElement:(FGUIElement *)aElement withName:(NSString *)aName zOrder:(NSInteger)aZOrder
+{
+    assert(aElement);
+    assert(aName);
+    assert(layerTable[aName] == nil);
+    
+    aElement.zOrder = aZOrder;
+    [self addChild:aElement];
+    [layerArray addObject:aElement];
+    layerTable[aName] = aElement;
 }
 
 - (BOOL)ccTouchBegan:(UITouch *)touch withEvent:(UIEvent *)event
@@ -609,6 +648,27 @@
     CGPoint touchPosition = [[CCDirector sharedDirector] convertToGL:[touch locationInView:touch.view]];
     [activeLayer _touchEnded:touchPosition];
     activeLayer = nil;
+}
+
+- (void)visit
+{
+    if (isArrayDirty)
+    {
+        SortChildrenZOrder(self);
+    }
+    
+    [super visit];
+    
+    if (isArrayDirty)
+    {
+        isArrayDirty = NO;
+        
+        NSInteger z = 0;
+        for (FGUIElement *aChild in layerArray)
+        {
+            z = [aChild _updateChildrenZOrder:z];
+        }
+    }
 }
 
 @end
@@ -661,6 +721,12 @@
 {
     assert(aRoot);
     root = aRoot;
+}
+
+- (void)_setParent:(FGUIElement *)aParent
+{
+    assert(aParent);
+    fguiParent = aParent;
 }
 
 @end
@@ -817,6 +883,12 @@
     sprite.scaleY = scale.y;
 }
 
+- (NSInteger)_updateZOrder:(NSInteger)z
+{
+    [root.batchNode reorderChild:sprite z:z++];
+    return z;
+}
+
 @end
 
 @implementation FGUISprite
@@ -902,6 +974,12 @@
     CGPoint scale = [self worldScale];
     sprite.scaleX = scale.x;
     sprite.scaleY = scale.y;
+}
+
+- (NSInteger)_updateZOrder:(NSInteger)z
+{
+    [root.batchNode reorderChild:sprite z:z++];
+    return z;
 }
 
 @end
@@ -994,6 +1072,12 @@
     CGPoint scale = [self worldScale];
     label.scaleX = scale.x;
     label.scaleY = scale.y;
+}
+
+- (NSInteger)_updateZOrder:(NSInteger)z
+{
+    [root.batchNode reorderChild:label z:z++];
+    return z;
 }
 
 @end
