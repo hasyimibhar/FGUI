@@ -10,11 +10,6 @@
 #import "MyCustomLayer.h"
 #import "matrix.h"
 
-@interface TestScene ()
-- (void)onButtonPressed;
-- (void)onButtonReleased;
-@end
-
 @implementation TestScene
 
 - (id)init
@@ -27,25 +22,28 @@
         // Disable anti-aliasing, because I'm using pixel font
         [[guiRoot.batchNode texture] setAliasTexParameters];
         [self addChild:guiRoot];
-        guiRoot.position = ccp(200, 0);
-        
-        FGUILayer *layer1 = [guiRoot createLayerWithName:@"Layer1" zOrder:0];
         
         CGSize winSize = [[CCDirector sharedDirector] winSize];
         
-        FGUILabel *titleLabel = [layer1 createLabelWithName:@"Title" string:@"Hello, world!" fontFile:@"HeadingFont.fnt" zOrder:10];
-        titleLabel.position = ccp(winSize.width / 2, winSize.height - 50);
-        titleLabel.scale = 2.0f;
+        FGUIElement *layer = [FGUIElement element];
+        layer.anchorPoint = ccp(0.5f, 0.5f);
+        layer.position = ccp(winSize.width / 2, winSize.height / 2);
+        [guiRoot addElement:layer name:@"Layer"];
 
-        FGUILabel *subtitleLabel = [layer1 createLabelWithName:@"Subtitle" string:@"Damn, it works! Thank you, mikezang!" fontFile:@"BodyFont.fnt"  width:90.0f alignment:kCCTextAlignmentLeft zOrder:10];
-        subtitleLabel.position = ccp(winSize.width / 2, winSize.height - 70);
-        
+        FGUILabel *titleLabel = [FGUILabel labelWithString:@"Hello, world!" file:@"HeadingFont.fnt"];
+        titleLabel.position = ccp(0, winSize.height / 2 - 20);
+        titleLabel.scale = 2.0f;
+        [layer addElement:titleLabel name:@"TitleLabel"];
+
+        FGUILabel *subtitleLabel = [FGUILabel labelWithString:@"Damn, it works! Thank you, mikezang!" file:@"BodyFont.fnt"  width:90.0f alignment:kCCTextAlignmentLeft];
+        subtitleLabel.position = ccp(0, winSize.height / 2 - 50);
         subtitleLabel.scale = 2.0f;
+        [layer addElement:subtitleLabel name:@"SubtitleLabel"];
         
         [subtitleLabel runAction:[CCRepeatForever actionWithAction:[CCRotateBy actionWithDuration:1.0f angle:360]]];
-        
-        MyCustomLayer *layer2 = [MyCustomLayer node];
-        [guiRoot addLayer:layer2 withName:@"MyLayer" zOrder:20];
+
+        MyCustomLayer *layer2 = [MyCustomLayer element];
+        [guiRoot addElement:layer2 name:@"MyLayer" zOrder:20];
 	}
 	
 	return self;
@@ -55,16 +53,6 @@
 {
     [guiRoot release];
 	[super dealloc];
-}
-
-- (void)onButtonPressed
-{
-    CCLOG(@"(SEL) Pressed!");
-}
-
-- (void)onButtonReleased
-{
-    CCLOG(@"(SEL) Released!");
 }
 
 @end

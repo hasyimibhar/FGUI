@@ -8,6 +8,6 @@
 
 #import "FGUI.h"
 
-@interface MyCustomLayer : FGUILayer
+@interface MyCustomLayer : FGUIElement
 
 @end

@@ -8,6 +8,12 @@
 
 /* Begin PBXBuildFile section */
 		1C2BCF0F163D11A50007260E /* CCLabelBNFont.m in Sources */ = {isa = PBXBuildFile; fileRef = 1C2BCF0E163D11A50007260E /* CCLabelBNFont.m */; };
+		1C2BCF2F163D86570007260E /* FGUIRoot.m in Sources */ = {isa = PBXBuildFile; fileRef = 1C2BCF2E163D86570007260E /* FGUIRoot.m */; };
+		1C2BCF32163D86850007260E /* FGUIElement.m in Sources */ = {isa = PBXBuildFile; fileRef = 1C2BCF31163D86850007260E /* FGUIElement.m */; };
+		1C2BCF3C163DA4450007260E /* FGUIButton.m in Sources */ = {isa = PBXBuildFile; fileRef = 1C2BCF3B163DA4450007260E /* FGUIButton.m */; };
+		1C2BCF3F163DA5250007260E /* FGUILabel.m in Sources */ = {isa = PBXBuildFile; fileRef = 1C2BCF3E163DA5250007260E /* FGUILabel.m */; };
+		1C2BCF42163DA6860007260E /* FGUISprite.m in Sources */ = {isa = PBXBuildFile; fileRef = 1C2BCF41163DA6860007260E /* FGUISprite.m */; };
+		1C2BCF46163DBCC20007260E /* FGUIHelpers.m in Sources */ = {isa = PBXBuildFile; fileRef = 1C2BCF45163DBCC10007260E /* FGUIHelpers.m */; };
 		1CDF050E1637969F00F3FCA1 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1CDF050D1637969F00F3FCA1 /* QuartzCore.framework */; };
 		1CDF05101637969F00F3FCA1 /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1CDF050F1637969F00F3FCA1 /* OpenGLES.framework */; };
 		1CDF05121637969F00F3FCA1 /* OpenAL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1CDF05111637969F00F3FCA1 /* OpenAL.framework */; };
@@ -133,7 +139,6 @@
 		1CDF0696163796A200F3FCA1 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 1CDF0695163796A200F3FCA1 /* main.m */; };
 		1CDF0699163796A200F3FCA1 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 1CDF0698163796A200F3FCA1 /* AppDelegate.m */; };
 		1CDF06A7163796C500F3FCA1 /* TestScene.m in Sources */ = {isa = PBXBuildFile; fileRef = 1CDF06A6163796C500F3FCA1 /* TestScene.m */; };
-		1CDF06AA163796E300F3FCA1 /* FGUI.m in Sources */ = {isa = PBXBuildFile; fileRef = 1CDF06A9163796E300F3FCA1 /* FGUI.m */; };
 		1CDF06B116379C6000F3FCA1 /* Spritesheet.plist in Resources */ = {isa = PBXBuildFile; fileRef = 1CDF06AF16379C6000F3FCA1 /* Spritesheet.plist */; };
 		1CDF06B216379C6000F3FCA1 /* Spritesheet.png in Resources */ = {isa = PBXBuildFile; fileRef = 1CDF06B016379C6000F3FCA1 /* Spritesheet.png */; };
 		1CDF08741637C7A800F3FCA1 /* BodyFont.fnt in Resources */ = {isa = PBXBuildFile; fileRef = 1CDF08721637C7A800F3FCA1 /* BodyFont.fnt */; };
@@ -145,6 +150,19 @@
 /* Begin PBXFileReference section */
 		1C2BCF0D163D11A50007260E /* CCLabelBNFont.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CCLabelBNFont.h; path = ../../../CCLabelBNFont.h; sourceTree = "<group>"; };
 		1C2BCF0E163D11A50007260E /* CCLabelBNFont.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = CCLabelBNFont.m; path = ../../../CCLabelBNFont.m; sourceTree = "<group>"; };
+		1C2BCF2D163D86570007260E /* FGUIRoot.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FGUIRoot.h; path = ../../../FGUIRoot.h; sourceTree = "<group>"; };
+		1C2BCF2E163D86570007260E /* FGUIRoot.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = FGUIRoot.m; path = ../../../FGUIRoot.m; sourceTree = "<group>"; };
+		1C2BCF30163D86850007260E /* FGUIElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FGUIElement.h; path = ../../../FGUIElement.h; sourceTree = "<group>"; };
+		1C2BCF31163D86850007260E /* FGUIElement.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = FGUIElement.m; path = ../../../FGUIElement.m; sourceTree = "<group>"; };
+		1C2BCF3A163DA4450007260E /* FGUIButton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FGUIButton.h; path = ../../../FGUIButton.h; sourceTree = "<group>"; };
+		1C2BCF3B163DA4450007260E /* FGUIButton.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = FGUIButton.m; path = ../../../FGUIButton.m; sourceTree = "<group>"; };
+		1C2BCF3D163DA5240007260E /* FGUILabel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FGUILabel.h; path = ../../../FGUILabel.h; sourceTree = "<group>"; };
+		1C2BCF3E163DA5250007260E /* FGUILabel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = FGUILabel.m; path = ../../../FGUILabel.m; sourceTree = "<group>"; };
+		1C2BCF40163DA6850007260E /* FGUISprite.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FGUISprite.h; path = ../../../FGUISprite.h; sourceTree = "<group>"; };
+		1C2BCF41163DA6860007260E /* FGUISprite.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = FGUISprite.m; path = ../../../FGUISprite.m; sourceTree = "<group>"; };
+		1C2BCF43163DBCC10007260E /* FGUIElement_Private.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FGUIElement_Private.h; path = ../../../FGUIElement_Private.h; sourceTree = "<group>"; };
+		1C2BCF44163DBCC10007260E /* FGUIHelpers.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FGUIHelpers.h; path = ../../../FGUIHelpers.h; sourceTree = "<group>"; };
+		1C2BCF45163DBCC10007260E /* FGUIHelpers.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = FGUIHelpers.m; path = ../../../FGUIHelpers.m; sourceTree = "<group>"; };
 		1CDF05091637969F00F3FCA1 /* FGUISample.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = FGUISample.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		1CDF050D1637969F00F3FCA1 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
 		1CDF050F1637969F00F3FCA1 /* OpenGLES.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGLES.framework; path = System/Library/Frameworks/OpenGLES.framework; sourceTree = SDKROOT; };
@@ -406,7 +424,6 @@
 		1CDF06A5163796C500F3FCA1 /* TestScene.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TestScene.h; sourceTree = "<group>"; };
 		1CDF06A6163796C500F3FCA1 /* TestScene.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TestScene.m; sourceTree = "<group>"; };
 		1CDF06A8163796E300F3FCA1 /* FGUI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FGUI.h; path = ../../../FGUI.h; sourceTree = "<group>"; };
-		1CDF06A9163796E300F3FCA1 /* FGUI.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = FGUI.m; path = ../../../FGUI.m; sourceTree = "<group>"; };
 		1CDF06AF16379C6000F3FCA1 /* Spritesheet.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Spritesheet.plist; path = Resources/Spritesheet.plist; sourceTree = "<group>"; };
 		1CDF06B016379C6000F3FCA1 /* Spritesheet.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = Spritesheet.png; path = Resources/Spritesheet.png; sourceTree = "<group>"; };
 		1CDF08721637C7A800F3FCA1 /* BodyFont.fnt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = BodyFont.fnt; path = Resources/BodyFont.fnt; sourceTree = "<group>"; };
@@ -436,6 +453,27 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		1C2BCF2B163D860B0007260E /* FGUI */ = {
+			isa = PBXGroup;
+			children = (
+				1CDF06A8163796E300F3FCA1 /* FGUI.h */,
+				1C2BCF2D163D86570007260E /* FGUIRoot.h */,
+				1C2BCF2E163D86570007260E /* FGUIRoot.m */,
+				1C2BCF30163D86850007260E /* FGUIElement.h */,
+				1C2BCF31163D86850007260E /* FGUIElement.m */,
+				1C2BCF3A163DA4450007260E /* FGUIButton.h */,
+				1C2BCF3B163DA4450007260E /* FGUIButton.m */,
+				1C2BCF3D163DA5240007260E /* FGUILabel.h */,
+				1C2BCF3E163DA5250007260E /* FGUILabel.m */,
+				1C2BCF40163DA6850007260E /* FGUISprite.h */,
+				1C2BCF41163DA6860007260E /* FGUISprite.m */,
+				1C2BCF43163DBCC10007260E /* FGUIElement_Private.h */,
+				1C2BCF44163DBCC10007260E /* FGUIHelpers.h */,
+				1C2BCF45163DBCC10007260E /* FGUIHelpers.m */,
+			);
+			name = FGUI;
+			sourceTree = "<group>";
+		};
 		1CDF04FE1637969E00F3FCA1 = {
 			isa = PBXGroup;
 			children = (
@@ -476,8 +514,7 @@
 				1CDF0698163796A200F3FCA1 /* AppDelegate.m */,
 				1CDF06A5163796C500F3FCA1 /* TestScene.h */,
 				1CDF06A6163796C500F3FCA1 /* TestScene.m */,
-				1CDF06A8163796E300F3FCA1 /* FGUI.h */,
-				1CDF06A9163796E300F3FCA1 /* FGUI.m */,
+				1C2BCF2B163D860B0007260E /* FGUI */,
 				1CDF087E1637DD3A00F3FCA1 /* MyCustomLayer.h */,
 				1CDF087F1637DD3B00F3FCA1 /* MyCustomLayer.m */,
 				1CDF05201637969F00F3FCA1 /* Resources */,
@@ -1038,9 +1075,14 @@
 				1CDF0696163796A200F3FCA1 /* main.m in Sources */,
 				1CDF0699163796A200F3FCA1 /* AppDelegate.m in Sources */,
 				1CDF06A7163796C500F3FCA1 /* TestScene.m in Sources */,
-				1CDF06AA163796E300F3FCA1 /* FGUI.m in Sources */,
 				1CDF08801637DD3C00F3FCA1 /* MyCustomLayer.m in Sources */,
 				1C2BCF0F163D11A50007260E /* CCLabelBNFont.m in Sources */,
+				1C2BCF2F163D86570007260E /* FGUIRoot.m in Sources */,
+				1C2BCF32163D86850007260E /* FGUIElement.m in Sources */,
+				1C2BCF3C163DA4450007260E /* FGUIButton.m in Sources */,
+				1C2BCF3F163DA5250007260E /* FGUILabel.m in Sources */,
+				1C2BCF42163DA6860007260E /* FGUISprite.m in Sources */,
+				1C2BCF46163DBCC20007260E /* FGUIHelpers.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1095,6 +1137,11 @@
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = FGUISample/Prefix.pch;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					DEBUG,
+					"COCOS2D_DEBUG=1",
+					FGUI_DEBUG,
+				);
 				HEADER_SEARCH_PATHS = "\"FGUISample/libs/kazmath/include\"";
 				INFOPLIST_FILE = FGUISample/Resources/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 4.3;
