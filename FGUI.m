@@ -26,6 +26,36 @@
 
 @end
 
+#if FGUI_DEBUG
+
+@implementation FGUIBoundingBoxNode
+
+- (id)init
+{
+    if ((self = [super init]))
+    {
+        self.shaderProgram = [[CCShaderCache sharedShaderCache] programForKey:kCCShader_PositionTexture];
+    }
+    
+    return self;
+}
+
+- (void)draw
+{
+    CC_NODE_DRAW_SETUP();
+    
+    ccDrawColor4B(0, 0, 255, 150);
+    ccPointSize(5.0f);
+    ccDrawPoint(ccp(self.parent.contentSize.width * self.parent.anchorPoint.x, self.parent.contentSize.height * self.parent.anchorPoint.y));
+    
+    ccDrawColor4B(255, 0, 0, 150);
+    ccDrawRect(CGPointZero, ccp(self.parent.contentSize.width, self.parent.contentSize.height));
+}
+
+@end
+
+#endif
+
 @interface FGUIElement ()
 {
     FGUIElement *activeChild;
@@ -45,6 +75,8 @@
 - (void)_touchEnded:(CGPoint)localPosition;
 - (BOOL)_isInside:(CGPoint)position;
 - (void)_update;
+
+@property (readwrite, assign, nonatomic) FGUIElement * fguiParent;
 
 @end
 
@@ -100,7 +132,7 @@
     return [[[self alloc] initWithRoot:aRoot andName:aName andParent:aParent] autorelease];
 }
 
-@synthesize name, delegate;
+@synthesize name, delegate, fguiParent;
 
 - (id)init
 {
@@ -108,7 +140,7 @@
 	{
         root        = nil;
         name        = nil;
-        parent      = nil;
+        fguiParent  = nil;
         
         childTable  = [[NSMutableDictionary alloc] init];
         activeChild = nil;
@@ -129,10 +161,7 @@
         
         root        = aRoot;
         name        = [aName copy];
-        parent      = aParent;
-        
-        childTable  = [[NSMutableDictionary alloc] init];
-        activeChild = nil;
+        fguiParent  = aParent;
 	}
 	
 	return self;
@@ -145,8 +174,22 @@
 	[super dealloc];
 }
 
+- (void)onEnter
+{
+    [super onEnter];
+    
+#if FGUI_DEBUG
+    FGUIBoundingBoxNode *box = [FGUIBoundingBoxNode node];
+    [self addChild:box z:FGUI_BBNODE_Z tag:FGUI_BBNODE_TAG];
+#endif
+}
+
 - (void)onExit
 {
+#if FGUI_DEBUG
+    [self removeChildByTag:FGUI_BBNODE_TAG cleanup:YES];
+#endif
+    
     [super onExit];
 }
 
@@ -214,6 +257,32 @@
         [aChild _update];
     }
 }
+
+- (FGUINode *)createNodeWithName:(NSString *)aName zOrder:(int)zOrder
+{
+    assert(aName);
+    assert(zOrder >= 0);
+    assert(childTable[aName] == nil);
+    
+    FGUINode *node = [FGUINode elementWithRoot:root andName:aName andParent:self];
+    [self addChild:node z:zOrder];
+    childTable[aName] = node;
+    node.fguiParent = self;
+    
+    return node;
+}
+
+- (void)destroyNode:(FGUINode *)aNode
+{
+    assert(childTable[aNode.name]);
+    assert(childTable[aNode.name] == aNode);
+    assert([aNode isKindOfClass:FGUINode.class]);
+    assert([self.children containsObject:aNode]);
+    
+    [aNode removeFromParentAndCleanup:YES];
+    [childTable removeObjectForKey:aNode.name];
+}
+
 
 - (FGUILayer *)createLayerWithName:(NSString *)aName zOrder:(int)zOrder
 {
@@ -321,7 +390,6 @@
 - (BOOL)_isInside:(CGPoint)position
 {
     return CGRectContainsPoint(CGRectMake(0, 0, self.contentSize.width, self.contentSize.height), [self convertToNodeSpace:position]);
-//    return CGRectContainsPoint(CGRectMake(self.position.x, self.position.y, self.contentSize.width, self.contentSize.height), position);
 }
 
 - (BOOL)_touchBegan:(CGPoint)localPosition
@@ -377,12 +445,21 @@
 {
     kmMat3 transformationMatrix;
     
-    kmMat3Multiply(&transformationMatrix, &translateMatrix, &rotateMatrix);
+    kmMat3 actualTranslateMatrix = translateMatrix;
+    
+    // Adjust anchor point
+    if (!CGPointEqualToPoint(self.anchorPointInPoints, CGPointZero))
+    {
+        actualTranslateMatrix.mat[6] -= self.anchorPointInPoints.x;
+        actualTranslateMatrix.mat[7] -= self.anchorPointInPoints.y;
+    }
+    
+    kmMat3Multiply(&transformationMatrix, &actualTranslateMatrix, &rotateMatrix);
     kmMat3Multiply(&transformationMatrix, &transformationMatrix, &scaleMatrix);
     
-    if (parent != nil)
+    if (fguiParent != nil)
     {
-        kmMat3 parentMatrix = [parent transformationMatrix];
+        kmMat3 parentMatrix = [fguiParent transformationMatrix];
         kmMat3Multiply(&transformationMatrix, &transformationMatrix, &parentMatrix);
     }
     
@@ -401,9 +478,9 @@
         p.y += self.anchorPointInPoints.y;
     }
     
-    if (parent)
+    if (fguiParent)
     {
-        kmMat3 m = [parent transformationMatrix];
+        kmMat3 m = [fguiParent transformationMatrix];
         kmVec2Transform(&p, &p, &m);
     }
     
@@ -414,9 +491,9 @@
 {
     float worldRotation = self.rotation;
     
-    if (parent)
+    if (fguiParent)
     {
-        worldRotation += [parent worldRotation];
+        worldRotation += [fguiParent worldRotation];
     }
     
     return worldRotation;
@@ -426,9 +503,9 @@
 {
     CGPoint worldScale = ccp(self.scaleX, self.scaleY);
     
-    if (parent)
+    if (fguiParent)
     {
-        CGPoint parentScale = [parent worldScale];
+        CGPoint parentScale = [fguiParent worldScale];
         worldScale = ccp(worldScale.x * parentScale.x, worldScale.y * parentScale.y);
     }
 
@@ -500,7 +577,7 @@
 - (void)addLayer:(FGUILayer *)aLayer withName:(NSString *)aName zOrder:(int)zOrder
 {
     assert(aLayer);
-    assert(aLayer.parent == nil);
+    assert(aLayer.fguiParent == nil);
     assert(![layerTable containsValue:aLayer]);
     assert(aName);
     assert(zOrder >= 0);
@@ -561,6 +638,15 @@
     CGPoint touchPosition = [[CCDirector sharedDirector] convertToGL:[touch locationInView:touch.view]];
     [activeLayer _touchEnded:touchPosition];
     activeLayer = nil;
+}
+
+@end
+
+@implementation FGUINode
+
+- (BOOL)touchBegan:(CGPoint)localPosition
+{
+    return NO;
 }
 
 @end
@@ -745,7 +831,7 @@
 - (void)_update
 {
     sprite.position = [self worldPosition];
-    sprite.rotation = CC_RADIANS_TO_DEGREES([self worldRotation]);
+    sprite.rotation = [self worldRotation];
     
     CGPoint scale = [self worldScale];
     sprite.scaleX = scale.x;
@@ -799,11 +885,16 @@
 - (void)_update
 {
     sprite.position = [self worldPosition];
-    sprite.rotation = CC_RADIANS_TO_DEGREES([self worldRotation]);
+    sprite.rotation = [self worldRotation];
     
     CGPoint scale = [self worldScale];
     sprite.scaleX = scale.x;
     sprite.scaleY = scale.y;
+}
+
+- (BOOL)touchBegan:(CGPoint)localPosition
+{
+    return NO;
 }
 
 @end
@@ -858,11 +949,16 @@
 - (void)_update
 {
     label.position = [self worldPosition];
-    label.rotation = CC_RADIANS_TO_DEGREES([self worldRotation]);
+    label.rotation = [self worldRotation];
     
     CGPoint scale = [self worldScale];
     label.scaleX = scale.x;
     label.scaleY = scale.y;
+}
+
+- (BOOL)touchBegan:(CGPoint)localPosition
+{
+    return NO;
 }
 
 @end

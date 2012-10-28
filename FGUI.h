@@ -8,12 +8,28 @@
 
 #import "cocos2d.h"
 
-// For debugging purpose
 @interface NSDictionary (ValueSearch)
+// Helper method for searching a value inside a dictionary
 - (BOOL)containsValue:(id<NSObject>)value;
 @end
 
+#define FGUI_DEBUG      (0)
+
+#if FGUI_DEBUG
+
+// For debugging purpose
+
+#define FGUI_BBNODE_Z       (100000)
+#define FGUI_BBNODE_TAG     (0xBADF00D)
+
+@interface FGUIBoundingBoxNode : CCSprite
+
+@end
+
+#endif
+
 @class FGUIRoot;
+@class FGUINode;
 @class FGUILayer;
 @class FGUISprite;
 @class FGUIButton;
@@ -31,11 +47,14 @@ typedef void(^VoidBlock)(void);
 @interface FGUIElement : CCNode
 {
     FGUIRoot    *root;
-    FGUIElement *parent;
+    FGUIElement *fguiParent;
     NSString    *name;
     
     NSMutableDictionary *childTable;
 }
+
+- (FGUINode *)createNodeWithName:(NSString *)aName zOrder:(int)zOrder;
+- (void)destroyNode:(FGUINode *)aNode;
 
 - (FGUILayer *)createLayerWithName:(NSString *)aName zOrder:(int)zOrder;
 - (void)destroyLayer:(FGUILayer *)aLayer;
@@ -79,6 +98,10 @@ typedef void(^VoidBlock)(void);
 - (void)destroyLayerWithName:(NSString *)aLayerName;
 
 @property (readonly, assign, nonatomic) CCSpriteBatchNode * batchNode;
+
+@end
+
+@interface FGUINode : FGUIElement
 
 @end
 

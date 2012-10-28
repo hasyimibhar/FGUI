@@ -41,7 +41,7 @@
         
         subtitleLabel.scale = 2.0f;
         
-        [subtitleLabel runAction:[CCRepeatForever actionWithAction:[CCRotateBy actionWithDuration:1.0f angle:CC_DEGREES_TO_RADIANS(360)]]];
+        [subtitleLabel runAction:[CCRepeatForever actionWithAction:[CCRotateBy actionWithDuration:1.0f angle:360]]];
         
         MyCustomLayer *layer2 = [MyCustomLayer node];
         [guiRoot addLayer:layer2 withName:@"MyLayer" zOrder:20];
