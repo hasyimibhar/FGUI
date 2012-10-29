@@ -306,11 +306,15 @@
     activeChild = nil;
     BOOL isTouchSwallowed = NO;
     
-    for (FGUIElement *aChild in [childTable allValues])
+    for (FGUIElement *aChild in [childArray reverseObjectEnumerator])
     {
         if ([aChild _touchBegan:localPosition])
         {
-            activeChild = aChild;
+            if (aChild->childArray.count == 0 || aChild->activeChild)
+            {
+                activeChild = aChild;
+            }
+            
             isTouchSwallowed = YES;
             break;
         }
