@@ -8,8 +8,9 @@
 
 #import "FGUIElement.h"
 #import "CCLabelBNFont.h"
+#import "CCProtocols.h"
 
-@interface FGUILabel : FGUIElement
+@interface FGUILabel : FGUIElement<CCLabelProtocol>
 {
     CCLabelBNFont *label;
 }

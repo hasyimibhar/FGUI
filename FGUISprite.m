@@ -89,6 +89,8 @@
 
 - (void)_update
 {
+    [super _update];
+    
     sprite.position = [self worldPosition];
     sprite.rotation = [self worldRotation];
     

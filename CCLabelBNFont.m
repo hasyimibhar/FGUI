@@ -419,6 +419,9 @@ typedef struct _FontDefHashElement
 		HASH_FIND_INT(configuration_->fontDefDictionary_ , &key, element);
 //		NSAssert(element, @"FontDefinition could not be found!");
         
+        if (element == nil)
+            continue;
+        
 		ccBMFontDef fontDef = element->fontDef;
         
         CGRect rect1 = CC_RECT_POINTS_TO_PIXELS(self.textureRect);

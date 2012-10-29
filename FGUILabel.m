@@ -90,6 +90,11 @@
     label.opacity = opacity;
 }
 
+- (CCArray *)children
+{
+    return label.children;
+}
+
 - (id)initWithString:(NSString *)aString file:(NSString *)aFile
 {
     if ((self = [self initWithString:aString file:aFile width:kCCLabelAutomaticWidth alignment:kCCTextAlignmentCenter]))
@@ -133,6 +138,8 @@
 
 - (void)_update
 {
+    [super _update];
+    
     label.position = [self worldPosition];
     label.rotation = [self worldRotation];
     

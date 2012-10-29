@@ -121,55 +121,30 @@
 {
     [super setScale:scale];
     [self _update];
-    
-    for (FGUIElement *aChild in [childTable allValues])
-    {
-        [aChild _update];
-    }
 }
 
 - (void)setScaleX:(float)scaleX
 {
     [super setScaleX:scaleX];
     [self _update];
-    
-    for (FGUIElement *aChild in [childTable allValues])
-    {
-        [aChild _update];
-    }
 }
 
 - (void)setScaleY:(float)scaleY
 {
     [super setScaleY:scaleY];
     [self _update];
-    
-    for (FGUIElement *aChild in [childTable allValues])
-    {
-        [aChild _update];
-    }
 }
 
 - (void)setPosition:(CGPoint)position
 {
     [super setPosition:position];
     [self _update];
-    
-    for (FGUIElement *aChild in [childTable allValues])
-    {
-        [aChild _update];
-    }
 }
 
 - (void)setRotation:(float)rotation
 {
     [super setRotation:rotation];
     [self _update];
-    
-    for (FGUIElement *aChild in [childTable allValues])
-    {
-        [aChild _update];
-    }
 }
 
 - (void)addElement:(FGUIElement *)aElement name:(NSString *)aName
@@ -359,7 +334,10 @@
 
 - (void)_update
 {
-    
+    for (FGUIElement *aChild in childArray)
+    {
+        [aChild _update];
+    }
 }
 
 - (NSInteger)_updateChildrenZOrder:(NSInteger)z
