@@ -229,6 +229,12 @@
     [fguiParent ? fguiParent : root removeElement:self shouldCleanup:shouldCleanup];
 }
 
+- (FGUIElement *)childWithName:(NSString *)aName
+{
+    assert(aName);
+    return childTable[aName];
+}
+
 - (void)setup
 {
     

@@ -32,6 +32,8 @@
 - (void)removeElement:(FGUIElement *)aElement shouldCleanup:(BOOL)shouldCleanup;
 - (void)removeFromFGUIParentAndCleanup:(BOOL)shouldCleanup;
 
+- (FGUIElement *)childWithName:(NSString *)aName;
+
 - (void)setup;
 - (BOOL)touchBegan:(CGPoint)localPosition;
 - (void)touchMoved:(CGPoint)localPosition;

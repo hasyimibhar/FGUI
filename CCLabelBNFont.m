@@ -205,7 +205,7 @@ typedef struct _FontDefHashElement
     
     contentSize_ = CGSizeZero;
     
-    opacityModifyRGB_ = [[textureAtlas_ texture] hasPremultipliedAlpha];
+    opacityModifyRGB_ = YES;
     anchorPoint_ = ccp(0.5f, 0.5f);
     
     [self setString:theString updateLabel:YES];
@@ -417,12 +417,12 @@ typedef struct _FontDefHashElement
 		// unichar is a short, and an int is needed on HASH_FIND_INT
 		NSUInteger key = (NSUInteger)c;
 		HASH_FIND_INT(configuration_->fontDefDictionary_ , &key, element);
-		NSAssert(element, @"FontDefinition could not be found!");
+//		NSAssert(element, @"FontDefinition could not be found!");
         
 		ccBMFontDef fontDef = element->fontDef;
         
         CGRect rect1 = CC_RECT_POINTS_TO_PIXELS(self.textureRect);
-		CGRect rect2 = fontDef.rect;
+		CGRect rect2 = (fontDef.rect);
         rect2.origin.x += rect1.origin.x;
         rect2.origin.y += rect1.origin.y;
         CGRect rect3 = CC_RECT_PIXELS_TO_POINTS(rect2);
@@ -451,9 +451,9 @@ typedef struct _FontDefHashElement
                               kerningAmount,
                               (float)nextFontPositionY +
                               yOffset -
-                              rect2.size.height * 0.5f);
+                              rect3.size.height * 0.5f * CC_CONTENT_SCALE_FACTOR());
         
-        fontChar.position =  fontPos;
+        fontChar.position = CC_POINT_PIXELS_TO_POINTS(fontPos);
         
 		// update kerning
 		nextFontPositionX += element->fontDef.xAdvance + kerningAmount;
@@ -479,7 +479,7 @@ typedef struct _FontDefHashElement
     tmpSize.width = longestLine;
 	tmpSize.height = totalHeight;
     
-    [self setContentSize:CC_SIZE_POINTS_TO_PIXELS(tmpSize)];
+    [self setContentSize:CC_SIZE_PIXELS_TO_POINTS(tmpSize)];
     
     [super setOpacity:0];
     [super setDirty:NO];
