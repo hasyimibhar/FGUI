@@ -75,16 +75,18 @@
 	[super dealloc];
 }
 
-- (void)onEnter
+- (void)_onAdd
 {
-    [super onEnter];
+    [super _onAdd];
+    
     [root.batchNode addChild:sprite z:zOrder_];
 }
 
-- (void)onExit
+- (void)_onRemove
 {
     [sprite removeFromParentAndCleanup:NO];
-    [super onExit];
+    
+    [super _onRemove];
 }
 
 - (void)_update

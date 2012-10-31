@@ -114,8 +114,9 @@
     [childArray addObject:aElement];
     childTable[aName] = aElement;
     
+    [aElement _setRoot:self];
     [aElement _update];
-    [aElement setup];
+    [aElement _onAdd];
 }
 
 - (void)removeElement:(FGUIElement *)aElement shouldCleanup:(BOOL)shouldCleanup
@@ -127,6 +128,8 @@
     assert(childTable[aElement.name]);
     assert(childTable[aElement.name] == aElement);
     assert([self.children containsObject:aElement]);
+    
+    [aElement _onRemove];
     
     [aElement removeFromParentAndCleanup:shouldCleanup];
     [childTable removeObjectForKey:aElement.name];
@@ -160,6 +163,16 @@
 {
     [self doesNotRecognizeSelector:_cmd];
     return CGPointZero;
+}
+
+- (void)_onAdd
+{
+    [self doesNotRecognizeSelector:_cmd];
+}
+
+- (void)_onRemove
+{
+    [self doesNotRecognizeSelector:_cmd];
 }
 
 @end

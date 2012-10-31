@@ -95,56 +95,46 @@
     [super onExit];
 }
 
-//- (void)setAnchorPoint:(CGPoint)anchorPoint
-//{
-//    [super setAnchorPoint:anchorPoint];
-//    [self _update];
-//    
-//    for (FGUIElement *aChild in [childTable allValues])
-//    {
-//        [aChild _update];
-//    }
-//}
-//
-//- (void)setContentSize:(CGSize)contentSize
-//{
-//    [super setContentSize:contentSize];
-//    [self _update];
-//    
-//    for (FGUIElement *aChild in [childTable allValues])
-//    {
-//        [aChild _update];
-//    }
-//}
+- (void)setAnchorPoint:(CGPoint)anchorPoint
+{
+    [super setAnchorPoint:anchorPoint];
+    if (root) [self _update];
+}
+
+- (void)setContentSize:(CGSize)contentSize
+{
+    [super setContentSize:contentSize];
+    if (root) [self _update];
+}
 
 - (void)setScale:(float)scale
 {
     [super setScale:scale];
-    [self _update];
+    if (root) [self _update];
 }
 
 - (void)setScaleX:(float)scaleX
 {
     [super setScaleX:scaleX];
-    [self _update];
+    if (root) [self _update];
 }
 
 - (void)setScaleY:(float)scaleY
 {
     [super setScaleY:scaleY];
-    [self _update];
+    if (root) [self _update];
 }
 
 - (void)setPosition:(CGPoint)position
 {
     [super setPosition:position];
-    [self _update];
+    if (root) [self _update];
 }
 
 - (void)setRotation:(float)rotation
 {
     [super setRotation:rotation];
-    [self _update];
+    if (root) [self _update];
 }
 
 - (void)addElement:(FGUIElement *)aElement name:(NSString *)aName
@@ -174,8 +164,12 @@
     [childArray addObject:aElement];
     childTable[aName] = aElement;
 
-    [aElement _update];
-    [aElement setup];
+    if (root)
+    {
+        [aElement _setRoot:root];
+        [aElement _update];
+        [aElement _onAdd];
+    }
 }
 
 - (void)removeElement:(FGUIElement *)aElement shouldCleanup:(BOOL)shouldCleanup
@@ -187,6 +181,8 @@
     assert(childTable[aElement.name]);
     assert(childTable[aElement.name] == aElement);
     assert([self.children containsObject:aElement]);
+
+    [aElement _onRemove];
     
     [aElement removeFromParentAndCleanup:shouldCleanup];
     [childTable removeObjectForKey:aElement.name];
@@ -355,6 +351,33 @@
 - (NSInteger)_updateZOrder:(NSInteger)z
 {
     return z;
+}
+
+- (void)_onAdd
+{
+    for (FGUIElement *aChild in childArray)
+    {
+        [aChild _onAdd];
+    }
+}
+
+- (void)_onRemove
+{
+    for (FGUIElement *aChild in childArray)
+    {
+        [aChild _onRemove];
+    }
+}
+
+- (void)_setRoot:(FGUIRoot *)aRoot
+{
+    assert(aRoot);
+    root = aRoot;
+    
+    for (FGUIElement *aChild in childArray)
+    {
+        [aChild _setRoot:aRoot];
+    }
 }
 
 @end
