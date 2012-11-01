@@ -71,6 +71,7 @@
 
 - (void)dealloc
 {
+    assert(sprite.parent == nil);
     [sprite release];
 	[super dealloc];
 }

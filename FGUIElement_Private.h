@@ -18,6 +18,7 @@
 - (void)_setRoot:(FGUIRoot *)aRoot;
 - (void)_onAdd;
 - (void)_onRemove;
+- (void)_destroy;
 - (NSInteger)_updateChildrenZOrder:(NSInteger)z;
 - (NSInteger)_updateZOrder:(NSInteger)z;
 - (CGAffineTransform)_worldTranform;

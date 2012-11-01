@@ -83,10 +83,16 @@
 
 - (void)dealloc
 {
-    [onReleaseBlock release];
-    [onPressBlock release];
+    assert(sprite.parent == nil);
     [sprite release];
 	[super dealloc];
+}
+
+- (void)_destroy
+{
+    [onReleaseBlock release];
+    [onPressBlock release];
+    [super _destroy];
 }
 
 - (void)_onAdd

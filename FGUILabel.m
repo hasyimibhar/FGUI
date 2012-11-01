@@ -120,6 +120,7 @@
 
 - (void)dealloc
 {
+    assert(label.parent == nil);
     [label release];
     [super dealloc];
 }

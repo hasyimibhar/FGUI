@@ -183,6 +183,10 @@
     assert([self.children containsObject:aElement]);
 
     [aElement _onRemove];
+    if (shouldCleanup)
+    {
+        [aElement _destroy];
+    }
     
     [aElement removeFromParentAndCleanup:shouldCleanup];
     [childTable removeObjectForKey:aElement.name];
@@ -366,6 +370,14 @@
     for (FGUIElement *aChild in childArray)
     {
         [aChild _onRemove];
+    }
+}
+
+- (void)_destroy
+{
+    for (FGUIElement *aChild in childArray)
+    {
+        [aChild _destroy];
     }
 }
 
